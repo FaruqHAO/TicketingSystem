@@ -1,23 +1,28 @@
 ﻿# For more info on HTTP files go to https://aka.ms/vs/httpfile
 @Web_HostAddress = https://localhost:7296
-@AuthCookieName = .AspNetCore.Identity.Application
+@AuthCookieName = __Host-TS.Auth
 @AuthCookieValue = <AuthCookieValue>
 
-# GET Identity Account Login
-# Get the @RequestVerificationToken necessary for logging in.
-GET {{Web_HostAddress}}/Identity/Account/Login
-
-###
-
-# POST Identity Account Login
+# POST Login
 # Get the @AuthCookieValue necessary for authenticating requests.
 @Email=administrator@localhost
 @Password=Administrator1!
-@RequestVerificationToken=<RequestVerificationToken>
-POST {{Web_HostAddress}}/Identity/Account/Login
-Content-Type: application/x-www-form-urlencoded
+POST {{Web_HostAddress}}/api/Users/login?useCookies=true
+Content-Type: application/json
 
-Input.Email={{Email}}&Input.Password={{Password}}&__RequestVerificationToken={{RequestVerificationToken}}
+{
+  "email": "{{Email}}",
+  "password": "{{Password}}"
+}
+
+###
+
+# GET Antiforgery Token
+# Sets the JS-readable XSRF-TOKEN cookie. Copy its value into @XsrfToken and send it
+# as the X-XSRF-TOKEN header on every cookie-authenticated POST/PUT/PATCH/DELETE.
+@XsrfToken = <XsrfToken>
+GET {{Web_HostAddress}}/api/Users/antiforgery/token
+Cookie: {{AuthCookieName}}={{AuthCookieValue}}
 
 ###
 
@@ -42,6 +47,7 @@ Cookie: {{AuthCookieName}}={{AuthCookieValue}}
 # POST TodoLists
 POST {{Web_HostAddress}}/api/TodoLists
 Cookie: {{AuthCookieName}}={{AuthCookieValue}}
+X-XSRF-TOKEN: {{XsrfToken}}
 Content-Type: application/json
 
 // CreateTodoListCommand
@@ -54,6 +60,7 @@ Content-Type: application/json
 # PUT TodoLists
 PUT {{Web_HostAddress}}/api/TodoLists/1
 Cookie: {{AuthCookieName}}={{AuthCookieValue}}
+X-XSRF-TOKEN: {{XsrfToken}}
 Content-Type: application/json
 
 // UpdateTodoListCommand
@@ -67,6 +74,7 @@ Content-Type: application/json
 # DELETE TodoLists
 DELETE {{Web_HostAddress}}/api/TodoLists/1
 Cookie: {{AuthCookieName}}={{AuthCookieValue}}
+X-XSRF-TOKEN: {{XsrfToken}}
 
 ###
 
@@ -81,6 +89,7 @@ Cookie: {{AuthCookieName}}={{AuthCookieValue}}
 # POST TodoItems
 POST {{Web_HostAddress}}/api/TodoItems
 Cookie: {{AuthCookieName}}={{AuthCookieValue}}
+X-XSRF-TOKEN: {{XsrfToken}}
 Content-Type: application/json
 
 // CreateTodoItemCommand
@@ -91,9 +100,10 @@ Content-Type: application/json
 
 ###
 
-#PUT TodoItems UpdateItemDetails
-PUT {{Web_HostAddress}}/api/TodoItems/UpdateItemDetails?Id=1
+#PATCH TodoItems UpdateDetail
+PATCH {{Web_HostAddress}}/api/TodoItems/UpdateDetail/1
 Cookie: {{AuthCookieName}}={{AuthCookieValue}}
+X-XSRF-TOKEN: {{XsrfToken}}
 Content-Type: application/json
 
 // UpdateTodoItemDetailCommand
@@ -109,6 +119,7 @@ Content-Type: application/json
 # PUT TodoItems
 PUT {{Web_HostAddress}}/api/TodoItems/1
 Cookie: {{AuthCookieName}}={{AuthCookieValue}}
+X-XSRF-TOKEN: {{XsrfToken}}
 Content-Type: application/json
 
 // UpdateTodoItemCommand
@@ -123,5 +134,6 @@ Content-Type: application/json
 # DELETE TodoItem
 DELETE {{Web_HostAddress}}/api/TodoItems/1
 Cookie: {{AuthCookieName}}={{AuthCookieValue}}
+X-XSRF-TOKEN: {{XsrfToken}}
 
 ###

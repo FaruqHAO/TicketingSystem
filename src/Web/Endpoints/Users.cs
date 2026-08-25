@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using TicketingSystem.Application.Common.Interfaces;
 using TicketingSystem.Domain.Enums;
 using TicketingSystem.Infrastructure.Identity;
-using TicketingSystem.Web.Infrastructure;
 
 namespace TicketingSystem.Web.Endpoints;
 

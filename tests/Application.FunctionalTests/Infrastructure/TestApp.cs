@@ -40,11 +40,6 @@ public static class TestApp
         return await RunAsUserAsync("test@local", "Testing1234!", []);
     }
 
-    public static async Task<string> RunAsAdministratorAsync()
-    {
-        return await RunAsUserAsync("administrator@local", "Administrator1234!", [Domain.Constants.Roles.Administrator]);
-    }
-
     public static async Task<string> RunAsUserAsync(string userName, string password, string[] roles)
     {
         using var scope = FunctionalTestSetup.ScopeFactory.CreateScope();
@@ -110,14 +105,5 @@ public static class TestApp
         context.Add(entity);
 
         await context.SaveChangesAsync();
-    }
-
-    public static async Task<int> CountAsync<TEntity>() where TEntity : class
-    {
-        using var scope = FunctionalTestSetup.ScopeFactory.CreateScope();
-
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-        return await context.Set<TEntity>().CountAsync();
     }
 }

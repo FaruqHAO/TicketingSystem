@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Scalar.AspNetCore;
 using TicketingSystem.Infrastructure.Data;
-using TicketingSystem.Web.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using TicketingSystem.Application.Common.Interfaces;
-using TicketingSystem.Web.Infrastructure;
 using TicketingSystem.Web.Infrastructure.Authorization;
 using TicketingSystem.Web.Services;
 
