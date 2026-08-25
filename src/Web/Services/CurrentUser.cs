@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 
 using TicketingSystem.Application.Common.Interfaces;
 
@@ -14,6 +14,9 @@ public class CurrentUser : IUser
     }
 
     public string? Id => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+
     public List<string>? Roles => _httpContextAccessor.HttpContext?.User?.FindAll(ClaimTypes.Role).Select(x => x.Value).ToList();
 
+    public IReadOnlyCollection<string>? Permissions => _httpContextAccessor.HttpContext?.User?
+        .FindAll(Domain.Constants.Permissions.ClaimType).Select(x => x.Value).ToArray();
 }

@@ -11,4 +11,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MessagePack" />
+    <PackageReference Include="Microsoft.OpenApi" />
+    <PackageReference Include="System.Security.Cryptography.Xml" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using Scalar.AspNetCore;
 using TicketingSystem.Infrastructure.Data;
+using TicketingSystem.Web.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +15,27 @@ builder.AddWebServices();
 
 var app = builder.Build();
 
+// Honour the client IP and scheme forwarded by the reverse proxy / container ingress so that
+// rate-limiting partitions, audit logging, and HTTPS detection reflect the real client. The app is
+// only reachable through a trusted single ingress, so the known-proxy allow-list is cleared.
+var forwardedHeadersOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+forwardedHeadersOptions.KnownIPNetworks.Clear();
+forwardedHeadersOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardedHeadersOptions);
+
+app.UseExceptionHandler(options => { });
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     await app.InitialiseDatabaseAsync();
+
+    // API schema/reference is exposed in development only.
+    app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 else
 {
@@ -25,18 +44,20 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseCors(static builder =>
-    builder.AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowAnyOrigin());
+
+app.UseRouting();
+
+app.UseRateLimiter();
+
+app.UseCors(WebPolicies.SpaCors);
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Enforce antiforgery for cookie-authenticated mutations (must run after authentication).
+app.UseMiddleware<AntiforgeryMiddleware>();
 
 app.UseFileServer();
-
-app.MapOpenApi();
-app.MapScalarApiReference();
-
-app.UseExceptionHandler(options => { });
-
 
 app.MapDefaultEndpoints();
 app.MapEndpoints(typeof(Program).Assembly);

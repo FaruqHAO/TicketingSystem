@@ -6,6 +6,7 @@
     <SpaRoot>ClientApp\</SpaRoot>
     <OpenApiDocumentsDirectory>./wwwroot/openapi/</OpenApiDocumentsDirectory>
     <OpenApiGenerateDocumentsOptions>--file-name v1</OpenApiGenerateDocumentsOptions>
+    <UserSecretsId>66f34434-52b0-46f9-9be7-8f81b9706a95</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,11 +41,32 @@
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
       <DistFiles Include="$(SpaRoot)dist\browser\**;" />
-      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+      <ResolvedFileToPublish Include="@(DistFiles-&gt;'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
         <RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       </ResolvedFileToPublish>
     </ItemGroup>
+  </Target>
+
+  <!--
+    Build-time OpenAPI generation boots the app to enumerate endpoints. That builds the DI graph
+    (which requires a non-null connection string) but never opens a database connection. The real
+    connection string is supplied at runtime by Aspire (dev) / Key Vault (prod) and by user-secrets
+    for standalone runs, so it is deliberately absent from appsettings.json. Inject a throwaway,
+    non-connectable value for the doc generator only, and only when nothing else already provides one.
+  -->
+  <UsingTask TaskName="SetBuildEnvironmentVariable" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Name ParameterType="System.String" Required="true" />
+      <Value ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs">System.Environment.SetEnvironmentVariable(Name, Value);</Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="SetOpenApiBuildConnectionString" BeforeTargets="GenerateOpenApiDocuments" Condition="'$(ConnectionStrings__TicketingSystemDb)' == ''">
+    <SetBuildEnvironmentVariable Name="ConnectionStrings__TicketingSystemDb" Value="Host=openapi-build-only;Database=openapi-build-only;Username=openapi-build-only;Password=openapi-build-only" />
   </Target>
 </Project>

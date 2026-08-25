@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,15 +11,18 @@ public class IdentityService : IIdentityService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
+    private readonly IClaimsTransformation _claimsTransformation;
     private readonly IAuthorizationService _authorizationService;
 
     public IdentityService(
         UserManager<ApplicationUser> userManager,
         IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
+        IClaimsTransformation claimsTransformation,
         IAuthorizationService authorizationService)
     {
         _userManager = userManager;
         _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
+        _claimsTransformation = claimsTransformation;
         _authorizationService = authorizationService;
     }
 
@@ -59,6 +63,11 @@ public class IdentityService : IIdentityService
         }
 
         var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+
+        // The claims-principal factory does not run IClaimsTransformation, so permission claims
+        // would be absent here. Apply it explicitly so permission policies resolve for the MediatR
+        // authorization path exactly as they do in the HTTP pipeline.
+        principal = await _claimsTransformation.TransformAsync(principal);
 
         var result = await _authorizationService.AuthorizeAsync(principal, policyName);
 

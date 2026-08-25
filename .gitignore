@@ -38,6 +38,11 @@ bld/
 # Uncomment if you have tasks that create the project's static files in wwwroot
 #wwwroot/
 
+# Local development secrets (connection strings with real credentials) — never commit.
+# Production reads the connection string from the ConnectionStrings__TicketingSystemDb env var / Key Vault.
+src/Web/appsettings.Development.json
+src/AppHost/appsettings.Development.json
+
 # Auto-generated OpenAPI specification and TypeScript API clients
 src/Web/wwwroot/openapi/v1.json
 src/Web/ClientApp/src/app/web-api-client.ts
