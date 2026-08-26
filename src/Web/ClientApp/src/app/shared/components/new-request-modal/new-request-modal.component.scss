@@ -1,0 +1,40 @@
+.nr {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+
+.nr__pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s3);
+}
+
+.nr__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  padding-top: var(--s4);
+  margin-top: var(--s4);
+  border-top: 1px solid var(--glass-edge);
+}
+
+.nr__note {
+  font-size: 0.78rem;
+  max-width: 18rem;
+  line-height: 1.45;
+}
+
+.nr__actions {
+  display: flex;
+  gap: var(--s2);
+  margin-left: auto;
+}
+
+@media (width < 34rem) {
+  .nr__pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -1,0 +1,205 @@
+.gnav {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  padding: var(--s3) var(--s4);
+  transition: padding 0.35s var(--ease);
+}
+
+.gnav__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  max-width: 78rem;
+  margin-inline: auto;
+  padding: 0.55rem 0.7rem 0.55rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  transition:
+    background-color 0.35s var(--ease),
+    border-color 0.35s var(--ease),
+    box-shadow 0.35s var(--ease),
+    backdrop-filter 0.35s var(--ease);
+}
+
+// Only becomes glass once there is content behind it to refract. Over the hero it
+// is invisible chrome; over the page it is a floating pane.
+.gnav--scrolled {
+  padding-top: var(--s2);
+
+  .gnav__bar {
+    background: rgb(255 255 255 / 0.06);
+    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    border-color: var(--glass-edge);
+    box-shadow: var(--glass-lip), 0 12px 36px -14px rgb(4 2 12 / 0.8);
+  }
+}
+
+.gnav__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: none;
+  text-decoration: none;
+  color: var(--mist);
+
+  &:hover {
+    color: var(--mist);
+
+    .gnav__mark {
+      box-shadow: 0 0 18px -2px var(--pulse-cyan);
+      transform: rotate(45deg) scale(1.08);
+    }
+  }
+}
+
+// The mark is a rotated square with a cut corner — a ticket stub, abstracted.
+.gnav__mark {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex: none;
+  background: linear-gradient(135deg, var(--pulse-cyan), var(--bloom-orchid));
+  clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%);
+  border-radius: 4px;
+  transform: rotate(45deg);
+  transition:
+    transform 0.4s var(--ease-out),
+    box-shadow 0.4s var(--ease);
+}
+
+.gnav__wordmark {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.gnav__links {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  margin-inline: auto;
+  list-style: none;
+}
+
+.gnav__link {
+  display: block;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  color: var(--mist-dim);
+  text-decoration: none;
+  transition:
+    color 0.2s var(--ease),
+    background-color 0.2s var(--ease);
+
+  &:hover {
+    color: var(--mist);
+    background: var(--glass-fill);
+  }
+}
+
+.gnav__link--active {
+  color: var(--mist);
+  background: var(--glass-fill);
+}
+
+.gnav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  flex: none;
+  margin-left: auto;
+}
+
+.gnav__burger {
+  display: none;
+  place-items: center;
+  flex: none;
+  padding: 0.45rem;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-pill);
+  color: var(--mist-dim);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--mist);
+  }
+}
+
+.gnav__sheet {
+  max-width: 78rem;
+  margin: var(--s2) auto 0;
+  padding: var(--s2);
+  animation: gnav-sheet 0.28s var(--ease-out) both;
+}
+
+.gnav__sheet-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.gnav__sheet-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-sm);
+  color: var(--mist-dim);
+  text-decoration: none;
+  font-size: 0.98rem;
+
+  &:hover {
+    color: var(--mist);
+    background: var(--glass-fill);
+  }
+
+  lucide-icon {
+    opacity: 0.45;
+  }
+}
+
+@keyframes gnav-sheet {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (width < 62rem) {
+  .gnav__links {
+    display: none;
+  }
+
+  .gnav__burger {
+    display: grid;
+  }
+
+  .gnav__actions {
+    margin-left: auto;
+  }
+}
+
+@media (width < 30rem) {
+  .gnav {
+    padding-inline: var(--s2);
+  }
+
+  .gnav__bar {
+    gap: var(--s2);
+    padding-left: 0.75rem;
+  }
+
+  // Below this the wordmark and two actions cannot share a line legibly; the mark
+  // alone still identifies the product.
+  .gnav__wordmark {
+    display: none;
+  }
+}

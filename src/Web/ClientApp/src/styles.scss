@@ -1,357 +1,657 @@
-@use "sass:map";
-@use "@picocss/pico/scss/index" as * with (
-  $theme-color: "violet",
-  $semantic-root-element: "app-root",
-  $enable-semantic-container: true,
-  $enable-classes: false
-);
+// ═══════════════════════════════════════════════════════════════════════════════
+//  TicketingSystem — Glass design system
+//
+//  A support desk runs on one thing: the clock. Every ticket is a promise with a
+//  deadline, so the palette is built to make time legible — a deep indigo field
+//  the eye reads as "quiet", cyan/teal for anything live or interactive, and amber
+//  and rose reserved exclusively for SLA pressure. Colour here means something.
+//
+//  Structure of this file:
+//    1. Tokens          — the only place colour, type and rhythm are decided
+//    2. Reset + base    — element defaults, since there is no CSS framework
+//    3. Atmosphere      — the fixed mesh field every glass surface refracts
+//    4. Typography      — display / body / data scale
+//    5. Glass primitives— global classes the glass-* components compose
+//    6. Form controls   — glass inputs, used by auth pages and modals
+//    7. Motion          — shared keyframes, and the reduced-motion contract
+//
+//  Component-specific rules live in the component's own .scss. Surfaces are
+//  declared here once so 30 components don't each ship their own copy of the
+//  same backdrop-filter stack.
+// ═══════════════════════════════════════════════════════════════════════════════
 
-// ── Base font size & typography ───────────────────────────────────────────────
-html {
-  font-size: 95%;
-}
-
+// ── 1. Tokens ─────────────────────────────────────────────────────────────────
 :root {
-  --pico-font-family-sans-serif: "Inter", system-ui, sans-serif;
-  --pico-font-family-headings: "Outfit", sans-serif;
-  --pico-font-family-monospace: "JetBrains Mono", monospace;
-  --pico-border-radius: 0.375rem;
-  --pico-line-height: 1.5;
+  // Base — deep indigo, near-black. The field everything floats on.
+  --ink-void: #070515;
+  --ink-deep: #150c33;
+  --ink-raise: #1c1140; // opaque fallback: native dropdowns, scroll tracks
+
+  // Bloom — the mesh gradient's two light sources.
+  --bloom-violet: #6d28d9;
+  --bloom-orchid: #a855f7;
+
+  // Pulse — accents. Anything interactive or live is cyan; teal is its partner.
+  --pulse-cyan: #22d3ee;
+  --pulse-teal: #2dd4bf;
+
+  // Text — violet-tinted, never pure white (pure white on indigo vibrates).
+  --mist: #edebff;
+  --mist-dim: #aaa3d6;
+  --mist-faint: #756ea6;
+
+  // SLA semantics. Not decoration — these encode time remaining.
+  --sla-ok: #2dd4bf;
+  --sla-warn: #fbbf24;
+  --sla-breach: #fb7185;
+
+  // Glass — fills, edges and the blur depth.
+  --glass-fill: rgb(255 255 255 / 0.055);
+  --glass-fill-hi: rgb(255 255 255 / 0.09);
+  --glass-fill-sunk: rgb(7 5 21 / 0.28);
+  --glass-edge: rgb(255 255 255 / 0.11);
+  --glass-edge-hi: rgb(255 255 255 / 0.2);
+  --glass-blur: 18px;
+
+  // The inner top highlight is what reads as "thickness" — a lit pane edge.
+  --glass-lip: inset 0 1px 0 rgb(255 255 255 / 0.08);
+  --glass-cast: 0 16px 48px -16px rgb(4 2 12 / 0.85);
+  --glow-cyan: 0 0 24px -4px rgb(34 211 238 / 0.45);
+  --glow-focus: 0 0 0 2px var(--ink-void), 0 0 0 4px rgb(34 211 238 / 0.7);
+
+  // Type
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, monospace;
+
+  // Rhythm — 4px base
+  --s1: 0.25rem;
+  --s2: 0.5rem;
+  --s3: 0.75rem;
+  --s4: 1rem;
+  --s5: 1.5rem;
+  --s6: 2rem;
+  --s7: 3rem;
+  --s8: 4rem;
+  --s9: 6rem;
+
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --topbar-h: 4.5rem;
+  --sidebar-w: 16.5rem;
+
+  color-scheme: dark;
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
-:root {
-  --header-height: 4.5rem;
+// ── 2. Reset + base ───────────────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-app-nav-menu > header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  max-width: none;
-  height: var(--header-height);
-  padding: 0;
+* {
   margin: 0;
-  z-index: 100;
-  background: color-mix(in srgb, var(--pico-background-color) 85%, transparent);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--pico-muted-border-color);
 }
 
-app-nav-menu > header nav {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  margin-inline: auto;
-  padding-inline: var(--pico-block-spacing-horizontal);
-
-  @media (min-width: 576px)  { max-width: 510px;  padding-inline: 0; }
-  @media (min-width: 768px)  { max-width: 700px; }
-  @media (min-width: 1024px) { max-width: 950px; }
-  @media (min-width: 1280px) { max-width: 1200px; }
-  @media (min-width: 1536px) { max-width: 1450px; }
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
-// ── Main content ──────────────────────────────────────────────────────────────
-app-root > main {
-  padding-top: calc(var(--header-height) + var(--pico-block-spacing-vertical) * 2);
+body {
+  min-height: 100dvh;
+  background: var(--ink-void);
+  color: var(--mist);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-// ── Nav brand ─────────────────────────────────────────────────────────────────
-app-nav-menu > header nav > ul:first-child a {
-  font-family: "Outfit", sans-serif;
-  font-size: 1.75rem;
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--pulse-cyan);
+  text-decoration-color: rgb(34 211 238 / 0.35);
+  text-underline-offset: 0.2em;
+  transition: color 0.18s var(--ease);
+
+  &:hover {
+    color: var(--pulse-teal);
+  }
+}
+
+ul,
+ol {
+  padding: 0;
+}
+
+// One focus treatment everywhere, keyboard-only. Never removed.
+:focus-visible {
+  outline: none;
+  box-shadow: var(--glow-focus);
+  border-radius: var(--radius-sm);
+}
+
+::selection {
+  background: rgb(34 211 238 / 0.28);
+  color: #fff;
+}
+
+// ── 3. Atmosphere ─────────────────────────────────────────────────────────────
+// Two fixed layers behind everything: a mesh of four bloom sources, and a grain
+// pass. The grain is the detail that stops large translucent panels reading as
+// flat CSS — real frosted glass has texture.
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -2;
+  pointer-events: none;
+}
+
+body::before {
+  background:
+    radial-gradient(42rem 34rem at 12% 8%, rgb(109 40 217 / 0.5), transparent 65%),
+    radial-gradient(38rem 30rem at 88% 12%, rgb(168 85 247 / 0.34), transparent 62%),
+    radial-gradient(46rem 34rem at 78% 88%, rgb(34 211 238 / 0.2), transparent 60%),
+    radial-gradient(34rem 28rem at 20% 92%, rgb(45 212 191 / 0.14), transparent 60%),
+    var(--ink-deep);
+  animation: mesh-drift 44s var(--ease) infinite alternate;
+}
+
+body::after {
+  z-index: -1;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+}
+
+@keyframes mesh-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(-3%, 2%, 0) scale(1.08);
+  }
+}
+
+// ── 4. Typography ─────────────────────────────────────────────────────────────
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 6.2vw, 4.4rem);
   font-weight: 700;
-  text-decoration: none;
-  color: var(--pico-contrast);
+  letter-spacing: -0.038em;
 }
 
-// ── Login / Register centered layout ──────────────────────────────────────────
-app-root > main:has(> app-login, > app-register) {
+h2 {
+  font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+}
+
+h3 {
+  font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+}
+
+h4 {
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+code,
+kbd,
+samp {
+  font-family: var(--font-data);
+  font-size: 0.9em;
+}
+
+// Small caps label. Earns its place by naming a region, not decorating one.
+.eyebrow {
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pulse-cyan);
+}
+
+// Tabular data: ticket refs, countdowns, metrics. Aligns in columns.
+.data {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.dim {
+  color: var(--mist-dim);
+}
+
+.faint {
+  color: var(--mist-faint);
+}
+
+.lede {
+  font-size: clamp(1.02rem, 1.5vw, 1.2rem);
+  line-height: 1.65;
+  color: var(--mist-dim);
+}
+
+// A single hairline that reads as a light seam rather than a border.
+.seam {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--glass-edge) 18%, var(--glass-edge) 82%, transparent);
+}
+
+// ── 5. Glass primitives ───────────────────────────────────────────────────────
+// Declared once, globally, and composed by the glass-* components. Kept here
+// rather than in each component so the backdrop-filter stack ships one time.
+.glass {
+  position: relative;
+  background: var(--glass-fill);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius);
+  box-shadow: var(--glass-lip), var(--glass-cast);
+}
+
+// The specular sweep across a pane's top edge. Sold separately because not every
+// surface wants it — small chips read as noisy with it on.
+.glass-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 40%;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.07), transparent);
+}
+
+// Recessed well — for content sitting *inside* a glass panel (lists, code, rails).
+.glass-sunk {
+  background: var(--glass-fill-sunk);
+  border: 1px solid rgb(255 255 255 / 0.06);
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 1px 3px rgb(4 2 12 / 0.5);
+}
+
+// Opt-in lift. Applied to interactive panels only.
+.glass-lift {
+  transition:
+    transform 0.28s var(--ease-out),
+    border-color 0.28s var(--ease),
+    box-shadow 0.28s var(--ease),
+    background-color 0.28s var(--ease);
+
+  &:hover {
+    transform: translateY(-3px);
+    background: var(--glass-fill-hi);
+    border-color: var(--glass-edge-hi);
+    box-shadow: var(--glass-lip), 0 24px 60px -18px rgb(4 2 12 / 0.92), var(--glow-cyan);
+  }
+}
+
+// Gradient text, used once per view at most — the hero verb and nothing else.
+.pulse-text {
+  background: linear-gradient(104deg, var(--pulse-cyan), var(--pulse-teal) 52%, var(--bloom-orchid));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+// ── 6. Form controls ──────────────────────────────────────────────────────────
+.field {
   display: flex;
   flex-direction: column;
+  gap: var(--s2);
+}
+
+.label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--mist-dim);
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 0.72rem 0.9rem;
+  background: var(--glass-fill-sunk);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-sm);
+  color: var(--mist);
+  transition:
+    border-color 0.2s var(--ease),
+    box-shadow 0.2s var(--ease),
+    background-color 0.2s var(--ease);
+
+  &::placeholder {
+    color: var(--mist-faint);
+  }
+
+  &:hover:not(:disabled) {
+    border-color: var(--glass-edge-hi);
+  }
+
+  &:focus {
+    outline: none;
+    background: rgb(7 5 21 / 0.4);
+    border-color: rgb(34 211 238 / 0.6);
+    box-shadow: var(--glow-cyan);
+  }
+
+  &[aria-invalid="true"] {
+    border-color: rgb(251 113 133 / 0.65);
+
+    &:focus {
+      box-shadow: 0 0 24px -4px rgb(251 113 133 / 0.5);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.select {
+  appearance: none;
+  padding-right: 2.4rem;
+  background-image: linear-gradient(45deg, transparent 50%, var(--mist-dim) 50%),
+    linear-gradient(135deg, var(--mist-dim) 50%, transparent 50%);
+  background-position:
+    calc(100% - 1.15rem) 1.15rem,
+    calc(100% - 0.8rem) 1.15rem;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+
+  // Native option lists can't be glass — give them a solid indigo instead of
+  // inheriting the OS default white.
+  option {
+    background: var(--ink-raise);
+    color: var(--mist);
+  }
+}
+
+.field-error {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-
-  > app-login,
-  > app-register {
-    display: contents;
-  }
-
-  > app-login > article,
-  > app-register > article {
-    width: 100%;
-    max-width: map.get(map.get($breakpoints, "md"), "viewport");
-  }
+  gap: var(--s2);
+  font-size: 0.82rem;
+  color: var(--sla-breach);
 }
 
-// ── Danger color — more vivid in dark mode ────────────────────────────────────
-[data-theme="dark"] {
-  --pico-del-color: #f05050;
-}
+// ── 7. Dashboard grids ────────────────────────────────────────────────────────
+// Every dashboard is a stack of the same three shapes. Declared once here so the
+// role pages hold content, not layout.
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --pico-del-color: #f05050;
-  }
-}
-
-// ── Nav separator ─────────────────────────────────────────────────────────────
-.nav-separator {
-  width: 1px;
-  height: 1.2rem;
-  background: var(--pico-muted-border-color);
-  padding: 0;
-  margin-inline: 0.25rem;
-}
-
-// ── Theme toggle ───────────────────────────────────────────────────────────────
-.theme-toggle-btn {
-  background: none;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  line-height: 1;
-  color: var(--pico-muted-color);
-  cursor: pointer;
-  --pico-form-element-spacing-vertical: 0;
-  --pico-form-element-spacing-horizontal: 0;
-
-  &:hover {
-    background: none;
-    color: var(--pico-primary);
-  }
-}
-
-// ── Icon buttons ───────────────────────────────────────────────────────────────
-.icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
-  font-size: 1.25rem;
-  font-weight: bold;
-  line-height: 1;
-  flex-shrink: 0;
-  background: transparent !important;
-  border-color: transparent !important;
-  color: var(--pico-muted-color);
-  box-shadow: none !important;
-  --pico-form-element-spacing-vertical: 0;
-  --pico-form-element-spacing-horizontal: 0;
-
-  &:hover {
-    color: var(--pico-primary);
-  }
-
-  lucide-icon {
-    display: flex;
-  }
-}
-
-// ── Todo layout ───────────────────────────────────────────────────────────────
-.todo-layout {
+// A row of metric tiles that reflows without breakpoints.
+.stats {
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: calc(var(--pico-block-spacing-horizontal) * 2);
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--s3);
+}
+
+// Equal panels side by side, collapsing to one column when they get cramped.
+.cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: var(--s3);
   align-items: start;
 }
 
-.todo-sidebar {
-  border-right: 1px solid var(--pico-muted-border-color);
-  padding-right: calc(var(--pico-block-spacing-horizontal) * 2);
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  li {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: calc(var(--pico-spacing) * 0.4) calc(var(--pico-spacing) * 0.5);
-    border-radius: var(--pico-border-radius);
-    cursor: pointer;
-    color: var(--pico-muted-color);
-
-    &[aria-current="true"] {
-      background: var(--pico-primary-background);
-      color: var(--pico-primary-inverse);
-    }
-
-    &:hover:not([aria-current="true"]) {
-      background: var(--pico-card-sectioning-background-color);
-      color: var(--pico-color);
-    }
-
-    small {
-      font-size: 0.75rem;
-      opacity: 0.7;
-    }
-  }
+// A list beside its summary. The list leads because it is the work.
+.cols-lead {
+  display: grid;
+  grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr);
+  gap: var(--s3);
+  align-items: start;
 }
 
-.todo-main {
-  min-width: 0;
-  padding-left: var(--pico-spacing);
-}
-
-.todo-panel-header {
+// Label/value rows inside a panel.
+.kv > div {
   display: flex;
   align-items: baseline;
-  gap: 0.25rem;
-  margin-bottom: var(--pico-spacing);
-}
-
-.todo-item {
-  display: flex;
-  align-items: baseline;
-  gap: calc(var(--pico-spacing) * 0.5);
-  padding-block: calc(var(--pico-spacing) * 0.35);
-  border-bottom: 1px solid var(--pico-muted-border-color);
-
-  input[type="checkbox"] {
-    margin: 0;
-    flex-shrink: 0;
-    align-self: center;
-  }
-}
-
-.todo-item-text {
-  flex: 1;
-  cursor: pointer;
-  word-break: break-word;
-}
-
-.todo-done {
-  text-decoration: line-through;
-  color: var(--pico-muted-color);
-}
-
-.todo-item-input {
-  flex: 1;
-  align-self: center;
-  margin: 0 !important;
-  padding: 0;
-  min-height: unset;
-  --pico-form-element-spacing-horizontal: 0;
-  --pico-form-element-spacing-vertical: 0;
-  border: none;
-  border-bottom: 1px solid var(--pico-primary);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-
-  &:not(:focus) {
-    border-bottom-color: transparent;
-  }
-}
-
-.todo-new-item {
-  border-bottom: none;
-
-  input[type="checkbox"] {
-    opacity: 0.3;
-  }
-}
-
-.todo-new-item-placeholder {
-  color: var(--pico-muted-color);
-  cursor: pointer;
-}
-
-.colour-dot {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.colour-picker {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: var(--pico-spacing);
-}
-
-.colour-swatch {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid var(--pico-muted-border-color);
-  cursor: pointer;
-  padding: 0;
-
-  &.selected {
-    border-color: var(--pico-primary);
-    box-shadow: 0 0 0 2px var(--pico-primary);
-  }
-}
-
-// ── Dialog header/footer ───────────────────────────────────────────────────────
-dialog article header {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
+  gap: var(--s3);
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgb(255 255 255 / 0.05);
 
-  > :first-child {
-    margin: 0;
-  }
-
-  > button[rel="prev"] {
-    position: static;
-    margin: 0;
-    margin-inline-start: auto;
-    flex-shrink: 0;
+  &:last-child {
+    border-bottom: 0;
   }
 }
 
-dialog article footer {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: calc(var(--pico-spacing) * 0.5);
+.kv dt {
+  font-size: 0.84rem;
+  color: var(--mist-dim);
 }
 
-// ── Button variants (not compiled in classless mode — defined manually) ───────
-button.secondary,
-[type="submit"].secondary,
-[type="button"].secondary,
-[role="button"].secondary {
-  --pico-background-color: transparent;
-  --pico-border-color: var(--pico-secondary);
-  --pico-color: var(--pico-secondary);
+.kv dd {
+  font-family: var(--font-data);
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
 
-  &:is(:hover, :active, :focus) {
-    --pico-background-color: color-mix(in srgb, var(--pico-secondary) 10%, transparent);
-    --pico-border-color: var(--pico-secondary-hover);
-    --pico-color: var(--pico-secondary-hover);
+// A closing aside inside a panel — the one line of context under a list or table.
+.note {
+  margin-top: var(--s3);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--mist-faint);
+}
+
+// A flush panel drops its padding so a table can run edge to edge; the closing note
+// still needs the gutter back.
+.gcard--flush .note {
+  padding: 0 var(--s5) var(--s5);
+}
+
+// Plain data table inside a flush panel. Rows are separated by light, not by rules
+// heavy enough to read as a grid — the glass should still show through.
+.dtab-scroll {
+  overflow-x: auto;
+  margin-inline: calc(var(--s4) * -1);
+  padding-inline: var(--s4);
+}
+
+.dtab {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+
+  th,
+  td {
+    padding: 0.7rem var(--s3);
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  thead th {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mist-faint);
+    border-bottom: 1px solid var(--glass-edge);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid rgb(255 255 255 / 0.05);
+    transition: background-color 0.18s var(--ease);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: var(--glass-fill);
+    }
   }
 }
 
-button.danger,
-[type="submit"].danger,
-[type="button"].danger,
-[role="button"].danger {
-  --pico-background-color: transparent;
-  --pico-border-color: var(--pico-del-color);
-  --pico-color: var(--pico-del-color);
+// Segmented filter. One recessed track, one lit segment — the same light logic as
+// the active row in the sidebar.
+.segs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--glass-fill-sunk);
+  border: 1px solid var(--glass-edge);
+}
 
-  &:is(:hover, :active, :focus) {
-    --pico-background-color: color-mix(in srgb, var(--pico-del-color) 10%, transparent);
-    --pico-border-color: color-mix(in srgb, var(--pico-del-color) 80%, black);
-    --pico-color: color-mix(in srgb, var(--pico-del-color) 80%, black);
+.seg {
+  padding: 0.3rem 0.8rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--mist-dim);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition:
+    color 0.2s var(--ease),
+    background-color 0.2s var(--ease);
+
+  &:hover {
+    color: var(--mist);
   }
 }
 
-.error {
-  color: var(--pico-del-color);
+.seg--on {
+  color: var(--ink-void);
+  background: var(--pulse-cyan);
+  box-shadow: var(--glow-cyan);
+
+  &:hover {
+    color: var(--ink-void);
+  }
+}
+
+@media (width < 64rem) {
+  .cols-lead {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// ── 8. Motion ─────────────────────────────────────────────────────────────────
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Staggered entrance. Set --i on children to sequence them.
+.rise-in {
+  animation: rise 0.7s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+// Scrollbars, so they don't punch an opaque grey channel through the glass.
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.16) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.14);
+  border: 3px solid transparent;
+  border-radius: var(--radius-pill);
+  background-clip: content-box;
+
+  &:hover {
+    background: rgb(255 255 255 / 0.26);
+    background-clip: content-box;
+  }
+}
+
+// The contract: motion is decoration here, never information. Everything below
+// still reads correctly with all of it switched off.
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .glass-lift:hover {
+    transform: none;
+  }
 }

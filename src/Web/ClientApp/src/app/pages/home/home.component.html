@@ -1,0 +1,132 @@
+<glass-nav>
+  <ng-container navActions>
+    @if (isAuthenticated()) {
+      <a glassBtn variant="primary" size="sm" [routerLink]="dashboardRoute()">
+        Go to your dashboard
+        <lucide-icon name="arrow-right" [size]="15" aria-hidden="true" />
+      </a>
+    } @else {
+      <a glassBtn variant="ghost" size="sm" routerLink="/login">Sign in</a>
+      <a glassBtn variant="primary" size="sm" routerLink="/register">Sign up</a>
+    }
+  </ng-container>
+</glass-nav>
+
+<div class="page">
+  <header class="hero">
+    <div class="hero__copy">
+      <p class="eyebrow rise-in" style="--i: 0">Support desk</p>
+      <h1 class="hero__title rise-in" style="--i: 1">
+        Every request,<br />
+        <span class="pulse-text">answered on time</span>.
+      </h1>
+      <p class="lede rise-in" style="--i: 2">
+        One place for customers to ask, one queue for agents to work, and the numbers managers need to
+        run the desk. The clock is visible to everyone from the moment a ticket opens.
+      </p>
+
+      <div class="hero__cta rise-in" style="--i: 3">
+        @if (isAuthenticated()) {
+          <a glassBtn variant="primary" size="lg" [routerLink]="dashboardRoute()">
+            Open your dashboard
+            <lucide-icon name="arrow-right" [size]="17" aria-hidden="true" />
+          </a>
+        } @else {
+          <a glassBtn variant="primary" size="lg" routerLink="/login">
+            Sign in
+            <lucide-icon name="arrow-right" [size]="17" aria-hidden="true" />
+          </a>
+          <a glassBtn variant="glass" size="lg" routerLink="/register">Create an account</a>
+        }
+      </div>
+
+      <p class="hero__note faint rise-in" style="--i: 4">
+        Your role decides what you see. Nothing else to configure.
+      </p>
+    </div>
+
+    <!-- Signature: the queue itself, mid-flight. Three tickets under glass with their
+         SLA clocks running — the one thing this product is actually about. -->
+    <div class="stack" role="list" aria-label="Example tickets in the queue">
+      @for (ticket of stack; track ticket.ref) {
+        <article class="tk glass glass-sheen" role="listitem" [style.--i]="$index">
+          <div class="tk__stub">
+            <span class="tk__ref data">{{ ticket.ref }}</span>
+          </div>
+
+          <div class="tk__body">
+            <div class="tk__meta">
+              <glass-badge [tone]="ticket.tone">{{ ticket.priority }}</glass-badge>
+              <span class="tk__who faint">{{ ticket.requester }}</span>
+            </div>
+            <h2 class="tk__subject">{{ ticket.subject }}</h2>
+          </div>
+
+          <glass-ring
+            class="tk__ring"
+            [remaining]="ticket.remaining"
+            [label]="ticket.clock"
+            caption="left"
+            [size]="68"
+            [stroke]="5"
+          />
+        </article>
+      }
+    </div>
+  </header>
+
+  <section class="desks" aria-labelledby="desks-title">
+    <div class="sec-head">
+      <p class="eyebrow">Four desks</p>
+      <h2 class="sec-title" id="desks-title">One system, and only what you need in it</h2>
+    </div>
+
+    @for (desk of desks; track desk.name) {
+      <glass-card [interactive]="true">
+        <lucide-icon class="desk__icon" [name]="desk.icon" [size]="22" aria-hidden="true" />
+        <h3 class="desk__name">{{ desk.name }}</h3>
+        <p class="desk__blurb dim">{{ desk.blurb }}</p>
+        <ul class="desk__does">
+          @for (item of desk.does; track item) {
+            <li>
+              <lucide-icon name="check" [size]="14" aria-hidden="true" />
+              {{ item }}
+            </li>
+          }
+        </ul>
+      </glass-card>
+    }
+  </section>
+
+  <section class="found" aria-label="How the desk is built">
+    @for (item of foundations; track item.title) {
+      <div class="found__item">
+        <lucide-icon class="found__icon" [name]="item.icon" [size]="18" aria-hidden="true" />
+        <div>
+          <h3 class="found__title">{{ item.title }}</h3>
+          <p class="found__body faint">{{ item.body }}</p>
+        </div>
+      </div>
+    }
+  </section>
+
+  <section class="closer glass glass-sheen">
+    <div>
+      <h2 class="closer__title">Ready when you are</h2>
+      <p class="dim">Sign in with your work address. Your desk is already waiting.</p>
+    </div>
+    @if (isAuthenticated()) {
+      <a glassBtn variant="primary" size="lg" [routerLink]="dashboardRoute()">Open your dashboard</a>
+    } @else {
+      <div class="closer__cta">
+        <a glassBtn variant="primary" size="lg" routerLink="/login">Sign in</a>
+        <a glassBtn variant="ghost" size="lg" routerLink="/register">Create an account</a>
+      </div>
+    }
+  </section>
+
+  <footer class="foot">
+    <span class="faint">TicketingSystem</span>
+    <span class="faint">Built on .NET and Angular</span>
+  </footer>
+</div>

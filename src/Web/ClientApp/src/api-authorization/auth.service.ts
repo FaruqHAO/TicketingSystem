@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, computed, signal } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { tap, catchError, map, switchMap } from 'rxjs/operators';
-import { API_BASE_URL, LoginRequest, RegisterRequest, UsersClient } from '../app/web-api-client';
+import { API_BASE_URL, CurrentUserResponse, LoginRequest, RegisterRequest, UsersClient } from '../app/web-api-client';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +10,24 @@ import { API_BASE_URL, LoginRequest, RegisterRequest, UsersClient } from '../app
 export class AuthService {
   private _isAuthenticated = new BehaviorSubject<boolean>(false);
   isAuthenticated$ = this._isAuthenticated.asObservable();
+
+  private readonly _user = signal<CurrentUserResponse | null>(null);
+
+  /**
+   * The caller as the server describes them. Populated by the app initializer before
+   * the first route resolves, so guards can read it synchronously.
+   */
+  readonly user = this._user.asReadonly();
+  readonly isAuthenticated = computed(() => this._user()?.isAuthenticated === true);
+  readonly email = computed(() => this._user()?.email ?? null);
+  /** Role names, e.g. 'Administrator'. Drives which dashboard the SPA shows. */
+  readonly roles = computed<readonly string[]>(() => this._user()?.roles ?? []);
+  /**
+   * Server-side permissions (`Permissions.Tickets.Create` style). These are for hiding
+   * actions the server would refuse anyway — they are not the UI route keys, which
+   * RolePermissionService derives from roles.
+   */
+  readonly serverPermissions = computed<readonly string[]>(() => this._user()?.permissions ?? []);
 
   constructor(
     private usersClient: UsersClient,
@@ -20,19 +38,15 @@ export class AuthService {
   initialize(): Observable<boolean> {
     // Prime the antiforgery cookies before probing auth state so any authenticated user landing
     // on a fresh page load already has a token for subsequent mutations.
-    return this.refreshAntiforgeryToken().pipe(
-      switchMap(() => this.usersClient.infoGET()),
-      map(() => true),
-      catchError(() => of(false)),
-      tap(isAuth => this._isAuthenticated.next(isAuth))
-    );
+    return this.refreshAntiforgeryToken().pipe(switchMap(() => this.loadCurrentUser()));
   }
 
   login(email: string, password: string): Observable<void> {
     return this.usersClient.login(true, undefined, new LoginRequest({ email, password })).pipe(
       // Antiforgery tokens are bound to the authenticated identity, so refresh after the identity changes.
       switchMap(() => this.refreshAntiforgeryToken()),
-      tap(() => this._isAuthenticated.next(true)),
+      // Roles and permissions arrive with the identity; re-read them before routing onward.
+      switchMap(() => this.loadCurrentUser()),
       map(() => void 0)
     );
   }
@@ -44,9 +58,27 @@ export class AuthService {
   logout(): Observable<void> {
     return this.usersClient.logout({}).pipe(
       switchMap(() => this.refreshAntiforgeryToken()),
-      tap(() => this._isAuthenticated.next(false)),
+      tap(() => this.setUser(null)),
       map(() => void 0)
     );
+  }
+
+  /**
+   * Reads the caller's identity, roles and permissions. The endpoint answers 200 with
+   * `isAuthenticated: false` for anonymous callers rather than 401, so a signed-out
+   * visitor on the landing page does not trip the interceptor's login redirect.
+   */
+  private loadCurrentUser(): Observable<boolean> {
+    return this.usersClient.getCurrentUser().pipe(
+      catchError(() => of(null)),
+      tap(user => this.setUser(user)),
+      map(() => this.isAuthenticated())
+    );
+  }
+
+  private setUser(user: CurrentUserResponse | null): void {
+    this._user.set(user?.isAuthenticated ? user : null);
+    this._isAuthenticated.next(this.isAuthenticated());
   }
 
   /**

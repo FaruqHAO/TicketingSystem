@@ -1,0 +1,65 @@
+<header class="gnav" [class.gnav--scrolled]="scrolled()">
+  <nav class="gnav__bar" aria-label="Main">
+    <a class="gnav__brand" routerLink="/" (click)="closeMenu()">
+      <span class="gnav__mark" aria-hidden="true"></span>
+      <span class="gnav__wordmark">{{ brand() }}</span>
+    </a>
+
+    @if (links().length) {
+      <ul class="gnav__links">
+        @for (link of links(); track link.path) {
+          <li>
+            <a
+              class="gnav__link"
+              [routerLink]="link.path"
+              routerLinkActive="gnav__link--active"
+              [routerLinkActiveOptions]="{ exact: !!link.exact }"
+            >
+              {{ link.label }}
+            </a>
+          </li>
+        }
+      </ul>
+    }
+
+    <!-- Actions stay in the bar at every width: on a landing page, signing in is
+         the whole point and should never be a tap away behind a menu. -->
+    <div class="gnav__actions">
+      <ng-content select="[navActions]" />
+    </div>
+
+    @if (links().length) {
+      <button
+        class="gnav__burger"
+        type="button"
+        [attr.aria-expanded]="menuOpen()"
+        aria-controls="gnav-sheet"
+        [attr.aria-label]="menuOpen() ? 'Close menu' : 'Open menu'"
+        (click)="toggleMenu()"
+      >
+        <lucide-icon [name]="menuOpen() ? 'x' : 'menu'" [size]="20" />
+      </button>
+    }
+  </nav>
+
+  @if (menuOpen()) {
+    <div class="gnav__sheet glass" id="gnav-sheet">
+      <ul class="gnav__sheet-links">
+        @for (link of links(); track link.path) {
+          <li>
+            <a
+              class="gnav__sheet-link"
+              [routerLink]="link.path"
+              routerLinkActive="gnav__link--active"
+              [routerLinkActiveOptions]="{ exact: !!link.exact }"
+              (click)="closeMenu()"
+            >
+              {{ link.label }}
+              <lucide-icon name="arrow-right" [size]="15" aria-hidden="true" />
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+</header>

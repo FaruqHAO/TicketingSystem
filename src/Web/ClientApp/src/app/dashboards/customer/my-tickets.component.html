@@ -1,0 +1,31 @@
+<dashboard-layout heading="My tickets" eyebrow="Customer desk" context="Customer" [sections]="nav">
+  <button layoutActions glassBtn variant="primary" (click)="newRequest.set(true)">
+    <lucide-icon name="plus" [size]="16" aria-hidden="true" />
+    New request
+  </button>
+
+  <glass-card heading="Everything you've raised" [sub]="tickets().length + ' shown'" [flush]="true">
+    <div cardAction class="segs" role="group" aria-label="Filter tickets">
+      @for (option of filters; track option) {
+        <button
+          class="seg"
+          type="button"
+          [class.seg--on]="filter() === option"
+          [attr.aria-pressed]="filter() === option"
+          (click)="filter.set(option)"
+        >
+          {{ option }}
+        </button>
+      }
+    </div>
+
+    <ticket-table
+      [tickets]="tickets()"
+      [showRequester]="false"
+      [showAssignee]="true"
+      [emptyMessage]="emptyMessage()"
+    />
+  </glass-card>
+
+  <new-request-modal [(open)]="newRequest" />
+</dashboard-layout>

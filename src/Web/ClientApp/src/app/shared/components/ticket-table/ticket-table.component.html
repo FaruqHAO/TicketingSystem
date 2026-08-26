@@ -1,0 +1,61 @@
+@if (tickets().length) {
+  <div class="ttab__scroll">
+    <table class="ttab">
+      <thead>
+        <tr>
+          <th scope="col">Ref</th>
+          <th scope="col">Subject</th>
+          @if (showRequester()) {
+            <th scope="col" class="ttab__hide-sm">Raised by</th>
+          }
+          @if (showAssignee()) {
+            <th scope="col" class="ttab__hide-sm">Owner</th>
+          }
+          <th scope="col">Status</th>
+          <th scope="col" class="ttab__hide-sm">Priority</th>
+          <th scope="col">SLA</th>
+          <th scope="col" class="ttab__hide-md">Updated</th>
+          @if (actionLabel()) {
+            <th scope="col"><span class="ttab__sr">Action</span></th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (ticket of tickets(); track ticket.ref) {
+          <tr>
+            <th scope="row" class="ttab__ref data">{{ ticket.ref }}</th>
+            <td class="ttab__subject">{{ ticket.subject }}</td>
+            @if (showRequester()) {
+              <td class="ttab__hide-sm dim">{{ ticket.requester }}</td>
+            }
+            @if (showAssignee()) {
+              <td class="ttab__hide-sm dim">{{ ticket.assignee ?? 'Unassigned' }}</td>
+            }
+            <td>
+              <glass-badge [dot]="false">{{ ticket.status }}</glass-badge>
+            </td>
+            <td class="ttab__hide-sm">
+              <glass-badge [tone]="priorityTone(ticket)">{{ ticket.priority }}</glass-badge>
+            </td>
+            <td>
+              <glass-badge [tone]="slaTone(ticket)" [dot]="false">
+                <span class="data">{{ ticket.clock }}</span>
+              </glass-badge>
+            </td>
+            <td class="ttab__hide-md faint">{{ ticket.updated }}</td>
+            @if (actionLabel()) {
+              <td class="ttab__act">
+                <button glassBtn size="sm" (click)="action.emit(ticket)">
+                  <lucide-icon [name]="actionIcon()" [size]="14" aria-hidden="true" />
+                  {{ actionLabel() }}
+                </button>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <p class="ttab__empty dim">{{ emptyMessage() }}</p>
+}

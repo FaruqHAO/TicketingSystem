@@ -1,0 +1,24 @@
+@if (hasHead()) {
+  <header class="gcard__head">
+    <div class="gcard__titles">
+      @if (eyebrow()) {
+        <p class="eyebrow">{{ eyebrow() }}</p>
+      }
+      @if (heading()) {
+        <h3 class="gcard__heading">{{ heading() }}</h3>
+      }
+      @if (sub()) {
+        <p class="gcard__sub dim">{{ sub() }}</p>
+      }
+    </div>
+    <div class="gcard__action">
+      <ng-content select="[cardAction]" />
+    </div>
+  </header>
+}
+
+<div class="gcard__body">
+  <ng-content />
+</div>
+
+<ng-content select="[cardFoot]" />

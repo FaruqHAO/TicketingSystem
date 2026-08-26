@@ -1,0 +1,50 @@
+.fb {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--s5);
+}
+
+.fb glass-card {
+  width: 100%;
+  max-width: 34rem;
+  padding: var(--s6);
+}
+
+.fb__title {
+  margin: var(--s2) 0 var(--s3);
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+}
+
+.fb__body {
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.fb__facts {
+  display: grid;
+  gap: var(--s3);
+  margin: var(--s4) 0;
+  padding: var(--s3) var(--s4);
+  border-radius: var(--radius-sm);
+
+  dt {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+
+  dd {
+    font-size: 0.88rem;
+    word-break: break-all;
+  }
+}
+
+.fb__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+}

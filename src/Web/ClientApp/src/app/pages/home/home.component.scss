@@ -1,0 +1,301 @@
+.page {
+  max-width: 78rem;
+  margin-inline: auto;
+  padding: 0 var(--s4) var(--s6);
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: var(--s7);
+  padding: var(--s8) 0 var(--s9);
+}
+
+.hero__copy {
+  max-width: 34rem;
+}
+
+.hero__title {
+  margin: var(--s2) 0 var(--s4);
+  font-size: clamp(2.5rem, 6.2vw, 4.15rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  margin-top: var(--s5);
+}
+
+.hero__note {
+  margin-top: var(--s3);
+  font-size: 0.85rem;
+}
+
+/* ── Signature: the ticket stack ───────────────────────────────────────── */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  animation: fade 0.9s var(--ease-out) both;
+  animation-delay: 220ms;
+}
+
+.tk {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s3) var(--s4);
+  border-radius: var(--radius-lg);
+  /* Each card sits further back and further right, so the queue reads as a stack of
+     panes in space rather than a list. */
+  transform: rotateY(-9deg) rotateX(2deg) translateX(calc(var(--i) * 1.15rem))
+    translateZ(calc(var(--i) * -34px));
+  opacity: calc(1 - var(--i) * 0.14);
+  transition:
+    transform 0.5s var(--ease-out),
+    opacity 0.5s var(--ease),
+    box-shadow 0.5s var(--ease);
+
+  &:hover {
+    transform: rotateY(-4deg) translateX(0) translateZ(20px);
+    opacity: 1;
+    box-shadow: var(--glass-lip), 0 26px 60px -20px rgb(2 1 8 / 0.9);
+  }
+}
+
+.tk__stub {
+  flex: none;
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  padding-right: var(--s3);
+  border-right: 1px dashed var(--glass-edge-hi);
+}
+
+/* Set on its side like a real stub, which also keeps the reference out of the way
+   of the subject line. */
+.tk__ref {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--mist-faint);
+}
+
+.tk__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.tk__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin-bottom: 0.4rem;
+}
+
+.tk__who {
+  font-size: 0.78rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tk__subject {
+  font-family: var(--font-body);
+  font-size: 0.98rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.tk__ring {
+  flex: none;
+}
+
+/* ── Section scaffolding ──────────────────────────────────────────────── */
+
+.sec-head {
+  grid-column: 1 / -1;
+  max-width: 30rem;
+  margin-bottom: var(--s2);
+}
+
+.sec-title {
+  margin-top: var(--s2);
+  font-size: clamp(1.6rem, 3.4vw, 2.3rem);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+}
+
+/* ── Desks ─────────────────────────────────────────────────────────────── */
+
+.desks {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s3);
+  padding-bottom: var(--s8);
+}
+
+.desk__icon {
+  color: var(--pulse-cyan);
+  margin-bottom: var(--s3);
+}
+
+.desk__name {
+  font-size: 1.1rem;
+  margin-bottom: var(--s2);
+}
+
+.desk__blurb {
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.desk__does {
+  list-style: none;
+  margin-top: var(--s3);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--glass-edge);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    color: var(--mist-dim);
+  }
+
+  lucide-icon {
+    color: var(--pulse-teal);
+    flex: none;
+  }
+}
+
+/* ── Foundations strip ────────────────────────────────────────────────── */
+
+.found {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s5);
+  padding: var(--s5) 0 var(--s8);
+  border-top: 1px solid var(--glass-edge);
+}
+
+.found__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s3);
+}
+
+.found__icon {
+  flex: none;
+  margin-top: 0.15rem;
+  color: var(--bloom-orchid);
+}
+
+.found__title {
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+}
+
+.found__body {
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+/* ── Closer + footer ─────────────────────────────────────────────────── */
+
+.closer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s5);
+  padding: var(--s6);
+  border-radius: var(--radius-lg);
+}
+
+.closer__title {
+  font-size: clamp(1.4rem, 2.8vw, 1.9rem);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+}
+
+.closer__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  flex: none;
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding-top: var(--s5);
+  margin-top: var(--s6);
+  border-top: 1px solid var(--glass-edge);
+  font-size: 0.82rem;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+
+@media (width < 68rem) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s6);
+    padding: var(--s6) 0 var(--s7);
+  }
+
+  .hero__copy {
+    max-width: none;
+  }
+
+  .desks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .found {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s4);
+  }
+}
+
+@media (width < 40rem) {
+  .page {
+    padding-inline: var(--s3);
+  }
+
+  /* Flatten the stack: the 3D offsets need horizontal room they no longer have. */
+  .tk {
+    transform: none;
+    opacity: 1;
+    padding: var(--s3);
+  }
+
+  .desks {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .closer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--s5);
+  }
+
+  .foot {
+    flex-direction: column;
+    gap: var(--s1);
+  }
+}

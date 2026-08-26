@@ -1,0 +1,89 @@
+<dashboard-layout heading="Analytics" eyebrow="Manager" context="Manager" [sections]="nav">
+  <glass-badge layoutActions [dot]="false">Mon 18 – Sun 24 Aug</glass-badge>
+
+  <div class="stats rise-in" style="--i: 0">
+    <glass-stat label="Opened" [value]="opened()" />
+    <glass-stat label="Resolved" [value]="resolved()" />
+    <glass-stat label="Net change" [value]="(net() > 0 ? '+' : '') + net()" />
+    <glass-stat label="Open right now" [value]="openAcrossQueues()" />
+  </div>
+
+  <glass-card
+    eyebrow="Seven days"
+    heading="Opened against resolved"
+    sub="One scale for both series, so the gap is the backlog moving."
+    class="rise-in"
+  >
+    <p class="legend" cardAction>
+      <span class="legend__key legend__key--opened">Opened</span>
+      <span class="legend__key legend__key--resolved">Resolved</span>
+    </p>
+
+    <div class="vol" role="img" [attr.aria-label]="chartSummary()">
+      @for (day of days; track day.day) {
+        <div class="vol__col" [style.--i]="$index">
+          <div class="vol__bars">
+            <span class="vol__bar vol__bar--opened" [style.height.%]="height(day.opened)">
+              <span class="vol__fig data">{{ day.opened }}</span>
+            </span>
+            <span class="vol__bar vol__bar--resolved" [style.height.%]="height(day.resolved)">
+              <span class="vol__fig data">{{ day.resolved }}</span>
+            </span>
+          </div>
+          <span class="vol__day">{{ day.day }}</span>
+        </div>
+      }
+    </div>
+
+    <p class="note">
+      @if (net() > 0) {
+        {{ net() }} more tickets arrived than were closed — the backlog grew by that much this week.
+      } @else {
+        The desk closed {{ -net() }} more than arrived, so the backlog shrank.
+      }
+      Busiest day was {{ busiestDay().day }}.
+    </p>
+  </glass-card>
+
+  <glass-card eyebrow="Capacity" heading="Who is carrying it" [flush]="true" class="rise-in">
+    <div class="dtab-scroll">
+      <table class="dtab">
+        <thead>
+          <tr>
+            <th scope="col">Person</th>
+            <th scope="col">Role</th>
+            <th scope="col">Open</th>
+            <th scope="col">Resolved this week</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (agent of agents; track agent.name) {
+            <tr>
+              <td>{{ agent.name }}</td>
+              <td class="dim">{{ agent.role }}</td>
+              <td class="data">{{ agent.open }}</td>
+              <td class="data">{{ agent.resolvedThisWeek }}</td>
+              <td>
+                <glass-badge [tone]="agentTone(agent.status)">{{ agent.status }}</glass-badge>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </glass-card>
+
+  <glass-card eyebrow="Against the promise" heading="Where the week landed">
+    <dl class="kv">
+      <div><dt>SLA attainment</dt><dd>{{ metrics.slaAttainment }}%</dd></div>
+      <div><dt>Median first response</dt><dd>{{ metrics.firstResponse }}</dd></div>
+      <div><dt>Median time to resolve</dt><dd>{{ metrics.resolveTime }}</dd></div>
+      <div><dt>Reopened</dt><dd>{{ metrics.reopened }}</dd></div>
+    </dl>
+    <p class="note">
+      Figures are illustrative until the ticket domain lands — this page reads from one data module, so it becomes
+      live in a single change.
+    </p>
+  </glass-card>
+</dashboard-layout>

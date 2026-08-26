@@ -1,0 +1,49 @@
+<dashboard-layout heading="Your requests" eyebrow="Customer desk" context="Customer" [sections]="nav">
+  <button layoutActions glassBtn variant="primary" (click)="newRequest.set(true)">
+    <lucide-icon name="plus" [size]="16" aria-hidden="true" />
+    New request
+  </button>
+
+  <div class="stats rise-in" style="--i: 0">
+    <glass-stat label="Open requests" [value]="openTickets().length" />
+    <glass-stat label="Waiting on you" [value]="waitingOnYou()" />
+    <glass-stat label="Resolved this month" [value]="6" [delta]="12" goodDirection="up" />
+  </div>
+
+  <div class="cols-lead rise-in" style="--i: 1">
+    <glass-card eyebrow="In flight" heading="What we're working on" [flush]="true">
+      <ticket-table
+        [tickets]="openTickets()"
+        [showRequester]="false"
+        [showAssignee]="true"
+        emptyMessage="Nothing open. Raise a request whenever you need us."
+      />
+    </glass-card>
+
+    <glass-card eyebrow="Your plan" heading="What we promise">
+      <dl class="kv">
+        <div>
+          <dt>First reply</dt>
+          <dd>1 hour</dd>
+        </div>
+        <div>
+          <dt>Urgent resolved</dt>
+          <dd>4 hours</dd>
+        </div>
+        <div>
+          <dt>Normal resolved</dt>
+          <dd>2 days</dd>
+        </div>
+        <div>
+          <dt>Cover</dt>
+          <dd>Mon–Fri, 08–18</dd>
+        </div>
+      </dl>
+      <p class="note">
+        The clock on each ticket counts down to these times, and you see the same number the agent does.
+      </p>
+    </glass-card>
+  </div>
+
+  <new-request-modal [(open)]="newRequest" (submitted)="onSubmitted($event)" />
+</dashboard-layout>

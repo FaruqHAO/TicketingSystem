@@ -1,0 +1,112 @@
+<dashboard-layout heading="People &amp; roles" eyebrow="Administrator" context="Administrator" [sections]="nav">
+  <glass-badge layoutActions [dot]="false">
+    <lucide-icon name="key-round" [size]="14" aria-hidden="true" />
+    {{ totalPermissions() }} permissions granted
+  </glass-badge>
+
+  <div class="stats rise-in" style="--i: 0">
+    <glass-stat label="Roles" [value]="roleViews().length" />
+    <glass-stat label="Permissions granted" [value]="totalPermissions()" />
+    <glass-stat label="Staff accounts" [value]="people.length" />
+  </div>
+
+  <glass-card
+    eyebrow="Live from the server"
+    heading="Roles"
+    sub="Permission claims as the API holds them — this is what authorization actually checks."
+    class="rise-in"
+  >
+    @if (loading()) {
+      <p class="dim">Reading roles…</p>
+    } @else if (failed()) {
+      <p class="pp__warn">
+        <lucide-icon name="shield-check" [size]="16" aria-hidden="true" />
+        Roles could not be read. The account needs <span class="data">Permissions.Roles.View</span> on the server,
+        which is separate from the key that opened this page.
+      </p>
+    } @else {
+      <ul class="roles">
+        @for (role of roleViews(); track role.name) {
+          <li class="role glass-sunk">
+            <div class="role__head">
+              <span class="role__name">{{ role.name }}</span>
+              <glass-badge tone="violet" [dot]="false">{{ role.total }}</glass-badge>
+            </div>
+
+            @for (group of role.groups; track group.area) {
+              <div class="role__group">
+                <span class="role__area">{{ group.area }}</span>
+                <span class="role__chips">
+                  @for (action of group.actions; track action) {
+                    <span class="chip data">{{ action }}</span>
+                  }
+                </span>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    }
+
+    <p class="note">
+      Granting and revoking runs through <span class="data">POST /api/Roles/grantPermission</span> and its revoke
+      twin, both audited. The editing UI is the next slice.
+    </p>
+  </glass-card>
+
+  <glass-card eyebrow="Staff" heading="Accounts" [flush]="true" class="rise-in">
+    <label class="pp__search" cardAction>
+      <lucide-icon name="search" [size]="16" aria-hidden="true" />
+      <input
+        class="input pp__input"
+        type="search"
+        placeholder="Filter by name or role"
+        aria-label="Filter people"
+        [value]="search()"
+        (input)="search.set($any($event.target).value)"
+      />
+    </label>
+
+    <div class="dtab-scroll">
+      <table class="dtab">
+        <thead>
+          <tr>
+            <th scope="col">Person</th>
+            <th scope="col">Role</th>
+            <th scope="col">Open</th>
+            <th scope="col">Resolved</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (person of filtered(); track person.name) {
+            <tr>
+              <td>
+                <span class="pp__who">
+                  <span class="pp__avatar" aria-hidden="true">{{ initials(person.name) }}</span>
+                  <span class="pp__names">
+                    <span>{{ person.name }}</span>
+                    <span class="faint">{{ email(person.name) }}</span>
+                  </span>
+                </span>
+              </td>
+              <td class="dim">{{ person.role }}</td>
+              <td class="data">{{ person.open }}</td>
+              <td class="data">{{ person.resolvedThisWeek }}</td>
+              <td class="dim">{{ person.status }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (!filtered().length) {
+        <p class="pp__empty dim">Nobody matches “{{ search() }}”.</p>
+      }
+    </div>
+
+    <p class="note">
+      These accounts are illustrative — no endpoint lists users yet. Role changes will post to
+      <span class="data">/api/Roles/assignUserToRole</span>, which needs a user id this table does not have.
+    </p>
+  </glass-card>
+</dashboard-layout>

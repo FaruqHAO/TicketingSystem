@@ -1,0 +1,37 @@
+.lg {
+  display: grid;
+  gap: var(--s4);
+}
+
+// Same shape as .field-error, but the second line wraps under the first rather than
+// pushing the icon off-centre.
+.lg__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--sla-breach);
+
+  lucide-icon {
+    flex: none;
+    margin-top: 0.1rem;
+  }
+
+  .faint {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.8rem;
+  }
+}
+
+.lg__link {
+  color: var(--pulse-cyan);
+  text-decoration: none;
+  border-bottom: 1px solid rgb(34 211 238 / 0.35);
+  transition: border-color 0.2s var(--ease);
+
+  &:hover {
+    border-bottom-color: var(--pulse-cyan);
+  }
+}

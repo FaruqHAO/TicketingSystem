@@ -1,0 +1,117 @@
+.rg {
+  display: grid;
+  gap: var(--s4);
+}
+
+// Requirement checklist. Sits under the field it describes, in the recessed well so it
+// reads as part of the input rather than as page copy.
+.rg__rules {
+  list-style: none;
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+  padding: var(--s3);
+  background: var(--glass-fill-sunk);
+  border: 1px solid rgb(255 255 255 / 0.06);
+  border-radius: var(--radius-sm);
+}
+
+.rg__rule {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--mist-faint);
+  transition: color 0.2s var(--ease);
+
+  lucide-icon {
+    flex: none;
+    color: var(--sla-ok);
+  }
+}
+
+.rg__rule--met {
+  color: var(--mist-dim);
+}
+
+.rg__dot {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  display: grid;
+  place-items: center;
+
+  &::before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentcolor;
+    opacity: 0.55;
+  }
+}
+
+// The met/unmet state is carried by colour and glyph; this restates it for a reader
+// that has neither.
+.rg__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.rg__errors {
+  display: grid;
+  gap: var(--s2);
+}
+
+.rg__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--sla-breach);
+
+  lucide-icon {
+    flex: none;
+    margin-top: 0.1rem;
+  }
+}
+
+.rg__done {
+  display: grid;
+  gap: var(--s3);
+}
+
+.rg__done-line {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  font-size: 0.95rem;
+  line-height: 1.5;
+
+  lucide-icon {
+    flex: none;
+    margin-top: 0.15rem;
+    color: var(--sla-ok);
+  }
+}
+
+.rg__done-note {
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.rg__link {
+  color: var(--pulse-cyan);
+  text-decoration: none;
+  border-bottom: 1px solid rgb(34 211 238 / 0.35);
+  transition: border-color 0.2s var(--ease);
+
+  &:hover {
+    border-bottom-color: var(--pulse-cyan);
+  }
+}

@@ -1,0 +1,104 @@
+// The <dialog> element is the backdrop container; the visible glass pane is the
+// child .gmodal__panel. That split is what lets a click on the dialog itself be
+// read as a backdrop click.
+.gmodal {
+  display: grid;
+  place-items: center;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  padding: var(--s4);
+  border: 0;
+  background: transparent;
+  overflow: auto;
+  overscroll-behavior: contain;
+
+  &::backdrop {
+    background: rgb(4 2 12 / 0.62);
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    animation: gmodal-veil 0.3s var(--ease-out) both;
+  }
+
+  &[open] .gmodal__panel {
+    animation: gmodal-in 0.36s var(--ease-out) both;
+  }
+}
+
+.gmodal__panel {
+  width: 100%;
+  max-width: var(--gmodal-w, 34rem);
+  display: flex;
+  flex-direction: column;
+  padding: var(--s5);
+  text-align: left;
+  // Stronger cast than a plain card: this pane floats above a blurred page.
+  box-shadow:
+    var(--glass-lip),
+    0 32px 80px -24px rgb(2 1 8 / 0.95);
+}
+
+.gmodal--sm .gmodal__panel {
+  --gmodal-w: 26rem;
+}
+
+.gmodal--lg .gmodal__panel {
+  --gmodal-w: 46rem;
+}
+
+.gmodal__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s4);
+  margin-bottom: var(--s4);
+}
+
+.gmodal__titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  min-width: 0;
+}
+
+.gmodal__heading {
+  font-size: 1.35rem;
+}
+
+.gmodal__sub {
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.gmodal__close {
+  flex: none;
+  padding: 0.35rem;
+  border-radius: 50%;
+}
+
+.gmodal__body {
+  min-width: 0;
+}
+
+@keyframes gmodal-veil {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes gmodal-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

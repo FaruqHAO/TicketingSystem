@@ -1,6 +1,7 @@
 @Home
 Feature: Home
 
-Scenario: Welcome heading is displayed
+Scenario: The landing page invites the visitor to sign in
     Given a user visits the home page
-    Then the heading "Welcome" is visible
+    Then the heading contains "answered on time"
+    And the sign in and sign up actions are offered

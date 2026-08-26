@@ -1,0 +1,108 @@
+<dashboard-layout heading="Desk overview" eyebrow="Manager" context="Manager" [sections]="nav">
+  <glass-badge layoutActions [tone]="onTarget() ? 'ok' : 'warn'">
+    {{ metrics.slaAttainment }}% against a {{ metrics.slaTarget }}% target
+  </glass-badge>
+
+  <div class="stats rise-in" style="--i: 0">
+    <glass-stat
+      label="First response"
+      [value]="metrics.firstResponse"
+      [delta]="metrics.firstResponseDelta"
+      goodDirection="down"
+    />
+    <glass-stat
+      label="Time to resolve"
+      [value]="metrics.resolveTime"
+      [delta]="metrics.resolveDelta"
+      goodDirection="down"
+    />
+    <glass-stat label="Open backlog" [value]="metrics.backlog" [delta]="metrics.backlogDelta" goodDirection="down" />
+    <glass-stat label="Reopened" [value]="metrics.reopened" [delta]="metrics.reopenedDelta" goodDirection="down" />
+  </div>
+
+  <div class="cols-lead rise-in" style="--i: 1">
+    <glass-card eyebrow="Where the pressure is" heading="Load by queue" sub="Bars are relative to the busiest queue.">
+      <ul class="ql">
+        @for (q of queues; track q.queue) {
+          <li class="ql__row">
+            <div class="ql__head">
+              <span class="ql__name">{{ q.queue }}</span>
+              <span class="ql__meta data">
+                <span>{{ q.open }} open</span>
+                @if (q.atRisk) {
+                  <span class="ql__risk">{{ q.atRisk }} at risk</span>
+                }
+                @if (q.breached) {
+                  <span class="ql__breach">{{ q.breached }} breached</span>
+                }
+              </span>
+            </div>
+            <div class="ql__track" aria-hidden="true">
+              <span class="ql__fill" [style.width.%]="load(q.open)">
+                <span class="ql__seg ql__seg--risk" [style.width.%]="share(q.atRisk, q.open)"></span>
+                <span class="ql__seg ql__seg--breach" [style.width.%]="share(q.breached, q.open)"></span>
+              </span>
+            </div>
+          </li>
+        }
+      </ul>
+
+      <div cardFoot>
+        <a glassBtn variant="ghost" size="sm" routerLink="/dashboard/manager/analytics">
+          Open analytics
+          <lucide-icon name="arrow-right" [size]="15" aria-hidden="true" />
+        </a>
+      </div>
+    </glass-card>
+
+    <glass-card eyebrow="This week" heading="SLA">
+      <div class="sla">
+        <glass-ring
+          [remaining]="attainment()"
+          [label]="metrics.slaAttainment + '%'"
+          caption="attained"
+          [size]="128"
+          [stroke]="7"
+        />
+        <p class="sla__read">
+          @if (onTarget()) {
+            On target, with room to spare.
+          } @else {
+            {{ shortfall() }} points under target — {{ breached() }} tickets did it.
+          }
+        </p>
+      </div>
+
+      <dl class="kv">
+        <div><dt>Target</dt><dd>{{ metrics.slaTarget }}%</dd></div>
+        <div><dt>At risk now</dt><dd>{{ atRisk() }}</dd></div>
+        <div><dt>Breached this week</dt><dd>{{ breached() }}</dd></div>
+        <div><dt>Window</dt><dd>Mon–Sun</dd></div>
+      </dl>
+    </glass-card>
+  </div>
+
+  <glass-card
+    eyebrow="Exports"
+    heading="Reports"
+    sub="Built from the desk's own data, no warehouse in between."
+    class="rise-in"
+  >
+    <ul class="reports">
+      @for (report of reports; track report.name) {
+        <li class="reports__row">
+          <lucide-icon class="reports__icon" name="file-text" [size]="17" aria-hidden="true" />
+          <span class="reports__who">
+            <span class="reports__name">{{ report.name }}</span>
+            <span class="faint">{{ report.period }} · {{ report.rows }} rows</span>
+          </span>
+          <button glassBtn variant="ghost" size="sm" [disabled]="true">Generate</button>
+        </li>
+      }
+    </ul>
+    <p class="note">
+      Generation is disabled until the ticket domain lands — the periods and row counts above are the shape the
+      endpoint will return.
+    </p>
+  </glass-card>
+</dashboard-layout>

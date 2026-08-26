@@ -22,6 +22,13 @@ public sealed class HomeStepDefinitions(HomePage homePage)
     [Given("a user visits the home page")]
     public Task GivenAUserVisitsTheHomePage() => homePage.GotoAsync();
 
-    [Then("the heading {string} is visible")]
-    public Task ThenTheHeadingIsVisible(string text) => homePage.AssertHeading(text);
+    [Then("the heading contains {string}")]
+    public Task ThenTheHeadingContains(string text) => homePage.AssertHeadingContains(text);
+
+    [Then("the sign in and sign up actions are offered")]
+    public async Task ThenTheSignInAndSignUpActionsAreOffered()
+    {
+        await homePage.AssertSignInOffered();
+        await homePage.AssertSignUpOffered();
+    }
 }

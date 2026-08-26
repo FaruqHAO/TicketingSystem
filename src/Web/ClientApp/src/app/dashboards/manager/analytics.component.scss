@@ -1,0 +1,128 @@
+// Volume chart. Two bars a day on one shared scale: the gap between them is the
+// backlog moving, which is the only thing a manager needs from this shape.
+.legend {
+  display: flex;
+  gap: var(--s4);
+  font-size: 0.78rem;
+  color: var(--mist-dim);
+}
+
+.legend__key {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  &::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+}
+
+.legend__key--opened::before {
+  background: var(--bloom-orchid);
+}
+
+.legend__key--resolved::before {
+  background: var(--pulse-cyan);
+}
+
+.vol {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--s3);
+  align-items: end;
+  padding-top: 1.4rem; // room for the figure that sits above each bar
+}
+
+.vol__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  min-width: 0;
+}
+
+.vol__bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  height: 11rem;
+}
+
+.vol__bar {
+  position: relative;
+  width: 34%;
+  max-width: 1.4rem;
+  min-height: 2px;
+  border-radius: 5px 5px 2px 2px;
+  box-shadow: var(--glass-lip);
+  animation: grow 0.8s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+  transform-origin: bottom;
+}
+
+.vol__bar--opened {
+  background: linear-gradient(180deg, var(--bloom-orchid), rgb(168 85 247 / 0.4));
+}
+
+.vol__bar--resolved {
+  background: linear-gradient(180deg, var(--pulse-cyan), rgb(34 211 238 / 0.35));
+}
+
+.vol__fig {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-bottom: 0.3rem;
+  font-size: 0.68rem;
+  color: var(--mist-faint);
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+}
+
+// The figures are detail, not the message — they arrive on hover and on keyboard
+// focus within, so the default state stays a clean silhouette.
+.vol__col:hover .vol__fig,
+.vol__col:focus-within .vol__fig {
+  opacity: 1;
+}
+
+.vol__day {
+  text-align: center;
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  color: var(--mist-faint);
+}
+
+@keyframes grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vol__bar {
+    animation: none;
+  }
+}
+
+@media (width < 34rem) {
+  .vol {
+    gap: var(--s2);
+  }
+
+  .vol__bars {
+    height: 8rem;
+  }
+
+  .vol__fig {
+    display: none;
+  }
+}

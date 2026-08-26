@@ -1,0 +1,51 @@
+<dashboard-layout heading="Assigned to me" eyebrow="Agent desk" context="Agent" [sections]="nav">
+  <a layoutActions glassBtn routerLink="/dashboard/agent/pool">
+    <lucide-icon name="inbox" [size]="16" aria-hidden="true" />
+    Open the pool
+  </a>
+
+  <div class="stats rise-in" style="--i: 0">
+    <glass-stat label="Assigned to you" [value]="queue().length" />
+    <glass-stat label="At risk" [value]="atRisk()" />
+    <glass-stat label="Resolved today" [value]="7" [delta]="15" goodDirection="up" deltaNote="vs yesterday" />
+    <glass-stat label="Waiting in the pool" [value]="nextInPool().length" />
+  </div>
+
+  <div class="cols-lead rise-in" style="--i: 1">
+    <glass-card eyebrow="Your queue" heading="Least time left first" [flush]="true">
+      <ticket-table [tickets]="queue()" emptyMessage="Your queue is clear. Claim one from the pool." />
+    </glass-card>
+
+    <div class="side">
+      @if (tightest(); as top) {
+        <glass-card eyebrow="Tightest clock" [heading]="top.ref">
+          <div class="urgent">
+            <glass-ring [remaining]="top.remaining" [label]="top.clock" caption="left" [size]="112" />
+            <div>
+              <p class="urgent__subject">{{ top.subject }}</p>
+              <p class="faint urgent__who">{{ top.requester }}</p>
+            </div>
+          </div>
+        </glass-card>
+      }
+
+      <glass-card eyebrow="Unclaimed" heading="Next in the pool">
+        <ul class="pool">
+          @for (ticket of nextInPool(); track ticket.ref) {
+            <li>
+              <span class="pool__ref data faint">{{ ticket.ref }}</span>
+              <span class="pool__subject">{{ ticket.subject }}</span>
+              <glass-badge [tone]="ticket.remaining > 0.5 ? 'ok' : ticket.remaining > 0.2 ? 'warn' : 'breach'" [dot]="false">
+                <span class="data">{{ ticket.clock }}</span>
+              </glass-badge>
+            </li>
+          }
+        </ul>
+        <a cardFoot glassBtn variant="ghost" size="sm" routerLink="/dashboard/agent/pool">
+          See all unclaimed
+          <lucide-icon name="arrow-right" [size]="14" aria-hidden="true" />
+        </a>
+      </glass-card>
+    </div>
+  </div>
+</dashboard-layout>

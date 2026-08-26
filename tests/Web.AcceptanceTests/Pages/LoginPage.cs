@@ -13,8 +13,13 @@ public class LoginPage(IPage page) : BasePage(page)
     public Task ClickLogin()
         => Page.Locator("button[type='submit']").ClickAsync();
 
-    public Task<string?> LogoutButtonText()
-        => Page.Locator("a:has-text('Log out')").TextContentAsync();
+    // A successful sign-in lands on /dashboard, which redirects to the desk the account's
+    // role owns — the administrator seed lands on the admin overview.
+    public Task AssertSignedIn()
+        => Assertions.Expect(Page.Locator(".dl__topbar h1")).ToHaveTextAsync("Desk overview");
+
+    public Task AssertSignOutAvailable()
+        => Assertions.Expect(Page.Locator("button[aria-label='Sign out']")).ToBeVisibleAsync();
 
     public Task AssertErrorVisible()
         => Assertions.Expect(Page.Locator("#login-error")).ToBeVisibleAsync();

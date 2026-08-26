@@ -1,0 +1,24 @@
+<div class="auth">
+  <a class="auth__brand rise-in" routerLink="/" style="--i: 0">
+    <span class="auth__mark" aria-hidden="true"></span>
+    <span class="auth__wordmark">TicketingSystem</span>
+  </a>
+
+  <section class="auth__pane glass glass-sheen rise-in" style="--i: 1">
+    <div class="auth__heads">
+      @if (eyebrow()) {
+        <p class="eyebrow">{{ eyebrow() }}</p>
+      }
+      <h1 class="auth__title">{{ heading() }}</h1>
+      @if (sub()) {
+        <p class="auth__sub dim">{{ sub() }}</p>
+      }
+    </div>
+
+    <ng-content />
+  </section>
+
+  <div class="auth__foot rise-in" style="--i: 2">
+    <ng-content select="[authFoot]" />
+  </div>
+</div>

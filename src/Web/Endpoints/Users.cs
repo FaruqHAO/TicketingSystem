@@ -1,10 +1,14 @@
+using System.Security.Claims;
+
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using TicketingSystem.Application.Common.Interfaces;
 using TicketingSystem.Domain.Enums;
 using TicketingSystem.Infrastructure.Identity;
+using TicketingSystem.Web.Models;
 
 namespace TicketingSystem.Web.Endpoints;
 
@@ -22,7 +26,34 @@ public class Users : IEndpointGroup
             .WithSummary("Issue an antiforgery token")
             .WithDescription("Sets a JS-readable XSRF-TOKEN cookie the SPA echoes in the X-XSRF-TOKEN header.");
 
+        // The SPA calls this on every page load to decide which dashboard to render, so it must not
+        // consume the auth throttle (10/min/IP would break shared-egress offices and dev hot reloads).
+        // It is a read of the caller's own claims: no secret is returned and nothing is brute-forceable.
+        groupBuilder.MapGet(GetCurrentUser, "me")
+            .AllowAnonymous()
+            .DisableRateLimiting();
+
         groupBuilder.MapPost(Logout, "logout").RequireAuthorization();
+    }
+
+    [EndpointSummary("Describe the current user")]
+    [EndpointDescription("Returns the caller's identity, roles and permissions. Answers with "
+        + "isAuthenticated=false rather than 401 so the SPA can probe auth state on startup.")]
+    public static Ok<CurrentUserResponse> GetCurrentUser(HttpContext context, IUser user)
+    {
+        if (user.Id is null)
+        {
+            return TypedResults.Ok(CurrentUserResponse.Anonymous);
+        }
+
+        return TypedResults.Ok(new CurrentUserResponse
+        {
+            IsAuthenticated = true,
+            Id = user.Id,
+            Email = context.User.FindFirstValue(ClaimTypes.Email) ?? context.User.Identity?.Name,
+            Roles = user.Roles ?? [],
+            Permissions = [.. user.Permissions ?? []]
+        });
     }
 
     [EndpointSummary("Issue an antiforgery token")]

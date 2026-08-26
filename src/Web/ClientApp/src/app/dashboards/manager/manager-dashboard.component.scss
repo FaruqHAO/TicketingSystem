@@ -1,0 +1,127 @@
+// Load by queue. One bar per queue, scaled against the busiest — the shape of the
+// row is the comparison, the numbers above it are the detail.
+.ql {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+.ql__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin-bottom: 0.45rem;
+}
+
+.ql__name {
+  font-size: 0.92rem;
+}
+
+.ql__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  font-size: 0.78rem;
+  color: var(--mist-dim);
+}
+
+.ql__risk {
+  color: var(--sla-warn);
+}
+
+.ql__breach {
+  color: var(--sla-breach);
+}
+
+.ql__track {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--glass-fill-sunk);
+  border: 1px solid var(--glass-edge);
+  overflow: hidden;
+}
+
+// The trouble sits at the tail of the bar: healthy work first, then at risk, then
+// breached, so the eye lands on the end of the longest row.
+.ql__fill {
+  display: flex;
+  justify-content: flex-end;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, rgb(34 211 238 / 0.35), var(--pulse-cyan));
+  transition: width 0.6s var(--ease);
+}
+
+.ql__seg {
+  height: 100%;
+  flex: none;
+}
+
+.ql__seg--risk {
+  background: var(--sla-warn);
+}
+
+.ql__seg--breach {
+  background: var(--sla-breach);
+}
+
+.sla {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  margin-bottom: var(--s4);
+}
+
+.sla__read {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--mist-dim);
+}
+
+.reports {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.reports__row {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgb(255 255 255 / 0.05);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.reports__icon {
+  flex: none;
+  color: var(--mist-faint);
+}
+
+.reports__who {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin-right: auto;
+  min-width: 0;
+
+  .faint {
+    font-size: 0.78rem;
+  }
+}
+
+.reports__name {
+  font-size: 0.92rem;
+}
+
+@media (width < 34rem) {
+  .sla {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,0 +1,81 @@
+// Filter sits in the card's action slot: it belongs to this list, not to the page.
+.au__filter {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.au__filter-label {
+  font-size: 0.78rem;
+  color: var(--mist-faint);
+}
+
+.au__select {
+  width: auto;
+  min-width: 11rem;
+  padding-block: 0.45rem;
+  background-position:
+    calc(100% - 1.15rem) 0.95rem,
+    calc(100% - 0.8rem) 0.95rem;
+  font-size: 0.85rem;
+}
+
+.au__warn {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  padding: 0 var(--s5) var(--s5);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--sla-warn);
+
+  lucide-icon {
+    flex: none;
+    margin-top: 0.15rem;
+  }
+
+  .data {
+    color: var(--mist);
+  }
+}
+
+.au__empty {
+  padding: var(--s5);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.au__pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s4) var(--s5) var(--s5);
+  border-top: 1px solid rgb(255 255 255 / 0.05);
+}
+
+.au__count {
+  font-size: 0.74rem;
+  text-align: center;
+}
+
+// One arrow glyph, flipped for the other direction — no second icon to keep in sync.
+.au__back {
+  transform: rotate(180deg);
+}
+
+@media (width < 60rem) {
+  .au__hide-md {
+    display: none;
+  }
+}
+
+@media (width < 46rem) {
+  .au__hide-sm {
+    display: none;
+  }
+
+  .au__count {
+    display: none;
+  }
+}

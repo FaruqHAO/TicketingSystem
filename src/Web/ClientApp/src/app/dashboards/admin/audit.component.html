@@ -1,0 +1,104 @@
+<dashboard-layout heading="Audit trail" eyebrow="Administrator" context="Administrator" [sections]="nav">
+  <glass-badge layoutActions [dot]="false">
+    <lucide-icon name="scroll-text" [size]="14" aria-hidden="true" />
+    Append-only
+  </glass-badge>
+
+  <div class="stats rise-in" style="--i: 0">
+    <glass-stat label="Events recorded" [value]="failed() ? '—' : total()" />
+    <glass-stat label="Failures on this page" [value]="failures()" />
+    <glass-stat label="Page" [value]="page() + ' of ' + totalPages()" />
+  </div>
+
+  <glass-card
+    eyebrow="Live from the server"
+    heading="Security events"
+    sub="Newest first. Written by the API itself, never by this page."
+    [flush]="true"
+    class="rise-in"
+  >
+    <label class="au__filter" cardAction>
+      <span class="au__filter-label">Action</span>
+      <select
+        class="select au__select"
+        aria-label="Filter by action"
+        [value]="action() ?? ''"
+        (change)="setAction($any($event.target).value)"
+      >
+        <option value="">All events</option>
+        @for (option of options; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </label>
+
+    @if (failed()) {
+      <p class="au__warn">
+        <lucide-icon name="shield-check" [size]="16" aria-hidden="true" />
+        The trail could not be read. This account needs <span class="data">Permissions.Audit.View</span> on the
+        server — a separate grant from the key that opened this page.
+      </p>
+    } @else {
+      <div class="dtab-scroll">
+        <table class="dtab">
+          <thead>
+            <tr>
+              <th scope="col">When</th>
+              <th scope="col">Action</th>
+              <th scope="col">Actor</th>
+              <th scope="col" class="au__hide-md">Subject</th>
+              <th scope="col" class="au__hide-sm">From</th>
+              <th scope="col">Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of entries(); track entry.id ?? $index) {
+              <tr>
+                <td class="data faint">{{ entry.timestamp | date: 'd MMM HH:mm:ss' }}</td>
+                <td>{{ label(entry.action) }}</td>
+                <td class="dim">{{ entry.actorUserName ?? entry.actorUserId ?? 'anonymous' }}</td>
+                <td class="au__hide-md dim">{{ subject(entry) }}</td>
+                <td class="au__hide-sm data faint">{{ entry.ipAddress ?? '—' }}</td>
+                <td>
+                  <glass-badge [tone]="entry.succeeded === false ? 'breach' : 'ok'">
+                    {{ entry.succeeded === false ? 'Failed' : 'OK' }}
+                  </glass-badge>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        @if (!entries().length) {
+          <p class="au__empty dim">
+            @if (loading()) {
+              Reading the trail…
+            } @else if (filtered()) {
+              No events of that kind yet.
+            } @else {
+              Nothing recorded yet. Sign in and out and this fills up.
+            }
+          </p>
+        }
+      </div>
+    }
+
+    <!-- Its own block: content aimed at a slot has to be the only node in the block it
+         sits in, or the router of nodes into slots skips it. -->
+    @if (!failed()) {
+      <div class="au__pager" cardFoot>
+        <button glassBtn variant="ghost" size="sm" [disabled]="page() <= 1 || loading()" (click)="go(-1)">
+          <lucide-icon name="arrow-right" [size]="15" class="au__back" aria-hidden="true" />
+          Newer
+        </button>
+        <span class="au__count faint data">
+          {{ total() }} events · {{ pageSize }} per page
+        </span>
+        <button glassBtn variant="ghost" size="sm" [disabled]="page() >= totalPages() || loading()" (click)="go(1)">
+          Older
+          <lucide-icon name="arrow-right" [size]="15" aria-hidden="true" />
+        </button>
+      </div>
+    }
+  </glass-card>
+</dashboard-layout>

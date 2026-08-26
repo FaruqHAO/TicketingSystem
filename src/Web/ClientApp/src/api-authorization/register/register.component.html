@@ -1,28 +1,94 @@
-<article>
-  <h2>Register</h2>
-  @if (error) {
-    <p class="error">{{ error }}</p>
+<auth-shell
+  eyebrow="Get started"
+  heading="Create your account"
+  [sub]="done ? '' : 'One address, one password. An administrator grants your role afterwards.'"
+>
+  @if (done) {
+    <div class="rg__done">
+      <p class="rg__done-line">
+        <lucide-icon name="check" [size]="16" aria-hidden="true" />
+        <span><span class="data">{{ email }}</span> is registered.</span>
+      </p>
+      <p class="rg__done-note faint">
+        New accounts start with no role, so there is no desk to open yet — an administrator assigns one, and
+        your dashboard appears the next time you sign in.
+      </p>
+      <a glassBtn variant="primary" size="lg" [block]="true" routerLink="/login">
+        Go to sign in
+        <lucide-icon name="arrow-right" [size]="16" aria-hidden="true" />
+      </a>
+    </div>
+  } @else {
+    <form class="rg" (ngSubmit)="register()">
+      <div class="field">
+        <label class="label" for="email">Work email</label>
+        <input
+          class="input"
+          type="email"
+          id="email"
+          name="email"
+          placeholder="you@company.com"
+          autocomplete="username"
+          [(ngModel)]="email"
+          [attr.aria-invalid]="emailTouched && !emailValid ? true : null"
+          aria-describedby="email-error"
+          (blur)="emailTouched = true"
+        />
+        @if (emailTouched && !emailValid) {
+          <p class="field-error" id="email-error">Enter a valid email address.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="label" for="password">Password</label>
+        <input
+          class="input"
+          type="password"
+          id="password"
+          name="password"
+          autocomplete="new-password"
+          [(ngModel)]="password"
+          aria-describedby="password-rules"
+        />
+
+        <!-- The server's policy, checked as you type. Better than being told what was
+             wrong with a password you have already forgotten. -->
+        <ul class="rg__rules" id="password-rules">
+          @for (rule of rules; track rule.label) {
+            <li class="rg__rule" [class.rg__rule--met]="met(rule)">
+              @if (met(rule)) {
+                <lucide-icon name="check" [size]="13" aria-hidden="true" />
+                <span class="rg__sr">Done:</span>
+              } @else {
+                <span class="rg__dot" aria-hidden="true"></span>
+                <span class="rg__sr">Still needed:</span>
+              }
+              <span>{{ rule.label }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      @if (errors.length) {
+        <div class="rg__errors" role="alert">
+          @for (message of errors; track message) {
+            <p class="rg__error">
+              <lucide-icon name="shield-check" [size]="15" aria-hidden="true" />
+              <span>{{ message }}</span>
+            </p>
+          }
+        </div>
+      }
+
+      <button glassBtn variant="primary" size="lg" type="submit" [block]="true" [loading]="busy" [disabled]="!canSubmit">
+        Create account
+        <lucide-icon name="arrow-right" [size]="16" aria-hidden="true" />
+      </button>
+    </form>
   }
-  <form (ngSubmit)="register()">
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" [(ngModel)]="email"
-      [attr.aria-invalid]="emailTouched ? !emailValid : null"
-      aria-describedby="email-helper"
-      autocomplete="username"
-      (blur)="emailTouched = true" />
-    <small id="email-helper">
-      {{ emailTouched && !emailValid ? 'Please enter a valid email address.' : '' }}
-    </small>
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" [(ngModel)]="password"
-      [attr.aria-invalid]="passwordTouched ? !passwordValid : null"
-      aria-describedby="password-helper"
-      autocomplete="new-password"
-      (blur)="passwordTouched = true" />
-    <small id="password-helper">
-      {{ passwordTouched && !passwordValid ? 'Password must be at least ' + minPasswordLength + ' characters.' : '' }}
-    </small>
-    <button type="submit">Register</button>
-    <p style="margin-top: 1rem">Already have an account? <a [routerLink]="['/login']">Log in</a></p>
-  </form>
-</article>
+
+  <p authFoot>
+    Already have an account?
+    <a class="rg__link" routerLink="/login">Sign in</a>
+  </p>
+</auth-shell>

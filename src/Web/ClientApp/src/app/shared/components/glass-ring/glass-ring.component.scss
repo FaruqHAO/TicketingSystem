@@ -1,0 +1,66 @@
+:host {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--gring-size);
+  height: var(--gring-size);
+  flex: none;
+}
+
+svg {
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.gring__track {
+  fill: none;
+  stroke: rgb(255 255 255 / 0.08);
+}
+
+.gring__arc {
+  fill: none;
+  stroke: var(--gring-ink);
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px var(--gring-ink));
+  transition:
+    stroke-dashoffset 0.8s var(--ease-out),
+    stroke 0.4s var(--ease);
+}
+
+.gring__inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  text-align: center;
+  padding: 0 12%;
+}
+
+.gring__value {
+  font-size: calc(var(--gring-size) * 0.2);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--mist);
+}
+
+.gring__caption {
+  font-size: calc(var(--gring-size) * 0.085);
+  line-height: 1.25;
+  color: var(--mist-faint);
+  text-wrap: balance;
+}
+
+:host(.gring--ok) {
+  --gring-ink: var(--sla-ok);
+}
+
+:host(.gring--warn) {
+  --gring-ink: var(--sla-warn);
+}
+
+:host(.gring--breach) {
+  --gring-ink: var(--sla-breach);
+}

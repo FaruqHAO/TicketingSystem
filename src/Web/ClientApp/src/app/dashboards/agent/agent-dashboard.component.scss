@@ -1,0 +1,57 @@
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+
+.side a[cardFoot] {
+  margin-top: var(--s3);
+}
+
+.urgent {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+}
+
+.urgent__subject {
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.urgent__who {
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+}
+
+.pool {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--s2);
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgb(255 255 255 / 0.05);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}
+
+.pool__ref {
+  flex: none;
+  font-size: 0.72rem;
+}
+
+.pool__subject {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

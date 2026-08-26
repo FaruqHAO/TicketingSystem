@@ -1,0 +1,35 @@
+<glass-sidebar [sections]="visibleSections()" [context]="context()" [(open)]="navOpen">
+  <div sidebarFoot class="dl__user">
+    <span class="dl__avatar" aria-hidden="true">{{ initials() }}</span>
+    <span class="dl__who">
+      <span class="dl__email" [title]="email()">{{ email() }}</span>
+      <span class="dl__role">{{ roleLabel() }}</span>
+    </span>
+    <button glassBtn variant="ghost" size="sm" class="dl__out" aria-label="Sign out" (click)="signOut()">
+      <lucide-icon name="log-out" [size]="16" />
+    </button>
+  </div>
+</glass-sidebar>
+
+<div class="dl__main">
+  <header class="dl__topbar glass">
+    <button class="dl__burger" type="button" aria-label="Open navigation" (click)="navOpen.set(true)">
+      <lucide-icon name="menu" [size]="20" />
+    </button>
+
+    <div class="dl__heads">
+      @if (eyebrow()) {
+        <p class="eyebrow">{{ eyebrow() }}</p>
+      }
+      <h1 class="dl__heading">{{ heading() }}</h1>
+    </div>
+
+    <div class="dl__actions">
+      <ng-content select="[layoutActions]" />
+    </div>
+  </header>
+
+  <main class="dl__content">
+    <ng-content />
+  </main>
+</div>

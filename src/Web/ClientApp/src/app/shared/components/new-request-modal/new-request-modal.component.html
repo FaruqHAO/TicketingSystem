@@ -1,0 +1,59 @@
+<glass-modal
+  [(open)]="open"
+  heading="New request"
+  sub="Tell us what happened. An agent picks it up from the pool."
+  size="md"
+>
+  <div class="nr">
+    <div class="field">
+      <label class="label" for="nr-subject">What's the problem?</label>
+      <input
+        class="input"
+        id="nr-subject"
+        type="text"
+        placeholder="Card payments failing at checkout"
+        autocomplete="off"
+        [value]="subject()"
+        (input)="subject.set($any($event.target).value)"
+      />
+    </div>
+
+    <div class="nr__pair">
+      <div class="field">
+        <label class="label" for="nr-category">Area</label>
+        <select class="select" id="nr-category" (change)="category.set($any($event.target).value)">
+          @for (option of categories; track option) {
+            <option [value]="option" [selected]="option === category()">{{ option }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label" for="nr-priority">How urgent is it?</label>
+        <select class="select" id="nr-priority" (change)="priority.set($any($event.target).value)">
+          @for (option of priorities; track option) {
+            <option [value]="option" [selected]="option === priority()">{{ option }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label" for="nr-detail">Anything else that would help</label>
+      <textarea
+        class="textarea"
+        id="nr-detail"
+        rows="4"
+        placeholder="What you were doing, what you expected, and what happened instead."
+      ></textarea>
+    </div>
+  </div>
+
+  <div modalFoot class="nr__foot">
+    <p class="faint nr__note">Drafts aren't filed yet — the ticket API lands with the next slice.</p>
+    <div class="nr__actions">
+      <button glassBtn variant="ghost" type="button" (click)="cancel()">Cancel</button>
+      <button glassBtn variant="primary" type="button" [disabled]="!canSend()" (click)="send()">Send request</button>
+    </div>
+  </div>
+</glass-modal>

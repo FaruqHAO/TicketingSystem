@@ -1,0 +1,21 @@
+.claimed {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-pill);
+    background: var(--glass-fill);
+    border: 1px solid var(--glass-edge);
+    font-size: 0.8rem;
+  }
+
+  lucide-icon {
+    color: var(--pulse-teal);
+  }
+}

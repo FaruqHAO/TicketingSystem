@@ -1,0 +1,31 @@
+<div class="fb">
+  <glass-card>
+    <p class="eyebrow">403 — no access</p>
+    <h1 class="fb__title">You don't have a key for that page</h1>
+    <p class="dim fb__body">
+      Your account is signed in, but the page is reserved for a role you don't hold. Ask an
+      administrator to grant it if you need it.
+    </p>
+
+    <dl class="fb__facts glass-sunk">
+      @if (attempted) {
+        <div>
+          <dt class="faint">Page</dt>
+          <dd class="data">{{ attempted }}</dd>
+        </div>
+      }
+      <div>
+        <dt class="faint">Your role</dt>
+        <dd class="data">{{ roles() }}</dd>
+      </div>
+    </dl>
+
+    <div class="fb__cta">
+      <a glassBtn variant="primary" [routerLink]="dashboardRoute()">
+        <lucide-icon name="layout-dashboard" [size]="16" aria-hidden="true" />
+        Back to your dashboard
+      </a>
+      <a glassBtn variant="ghost" routerLink="/">Home</a>
+    </div>
+  </glass-card>
+</div>

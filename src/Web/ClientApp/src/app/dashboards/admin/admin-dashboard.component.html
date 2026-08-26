@@ -1,0 +1,109 @@
+<dashboard-layout heading="Desk overview" eyebrow="Administrator" context="Administrator" [sections]="nav">
+  <glass-badge layoutActions tone="violet" [dot]="false">
+    <lucide-icon name="shield-check" [size]="14" aria-hidden="true" />
+    @if (isSuperUser()) {
+      Full access
+    } @else {
+      Scoped access
+    }
+  </glass-badge>
+
+  <div class="stats rise-in" style="--i: 0">
+    <glass-stat label="Roles" [value]="roleSummary().length" />
+    <glass-stat label="Permissions granted" [value]="grantedTotal()" />
+    <glass-stat label="Audit events" [value]="auditTotal() ?? '—'" />
+    <glass-stat label="Open tickets" [value]="openTickets" />
+  </div>
+
+  <div class="cols-lead rise-in" style="--i: 1">
+    <glass-card
+      eyebrow="Live from the audit trail"
+      heading="Auth activity"
+      sub="Every sign-in, lockout and permission change the server recorded."
+    >
+      @if (auditFailed()) {
+        <p class="ad__warn">
+          <lucide-icon name="shield-check" [size]="16" aria-hidden="true" />
+          The audit trail could not be read. This account needs
+          <span class="data">Permissions.Audit.View</span> on the server.
+        </p>
+      } @else if (!recent().length) {
+        <p class="dim">Nothing recorded yet. Sign in and out and this fills up.</p>
+      } @else {
+        <ul class="ad__feed">
+          @for (entry of recent(); track entry.id ?? $index) {
+            <li class="ad__event">
+              <span class="ad__dot" [class.ad__dot--bad]="entry.succeeded === false" aria-hidden="true"></span>
+              <span class="ad__event-body">
+                <span class="ad__action">{{ label(entry.action) }}</span>
+                <span class="faint">{{ who(entry) }}</span>
+              </span>
+              <span class="ad__at data faint">{{ entry.timestamp | date: 'HH:mm:ss' }}</span>
+            </li>
+          }
+        </ul>
+      }
+
+      <div cardFoot>
+        <a glassBtn variant="ghost" size="sm" routerLink="/dashboard/admin/audit">
+          Full audit trail
+          <lucide-icon name="arrow-right" [size]="15" aria-hidden="true" />
+        </a>
+      </div>
+    </glass-card>
+
+    <glass-card eyebrow="Who may do what" heading="Roles" sub="Permissions are held by roles, never by people.">
+      @if (rolesFailed()) {
+        <p class="ad__warn">
+          <lucide-icon name="shield-check" [size]="16" aria-hidden="true" />
+          Roles could not be read — this account needs <span class="data">Permissions.Roles.View</span>.
+        </p>
+      } @else {
+        <ul class="rsum">
+          @for (role of roleSummary(); track role.name) {
+            <li class="rsum__row">
+              <div class="rsum__head">
+                <span>{{ role.name }}</span>
+                <span class="data faint">{{ role.count }}</span>
+              </div>
+              <div class="rsum__track" aria-hidden="true">
+                <span class="rsum__fill" [style.width.%]="role.width"></span>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+
+      <div cardFoot>
+        <a glassBtn variant="ghost" size="sm" routerLink="/dashboard/admin/people">
+          People &amp; roles
+          <lucide-icon name="arrow-right" [size]="15" aria-hidden="true" />
+        </a>
+      </div>
+    </glass-card>
+  </div>
+
+  <glass-card
+    eyebrow="Every desk"
+    heading="Open any role's view"
+    sub="Each page still asks for its own permission key. Yours is a wildcard, so all of them answer yes."
+    class="rise-in"
+  >
+    <div class="desks">
+      @for (desk of desks; track desk.route) {
+        <a class="desk glass glass-lift" [routerLink]="desk.route">
+          <lucide-icon class="desk__icon" [name]="desk.icon" [size]="20" aria-hidden="true" />
+          <span class="desk__label">{{ desk.label }}</span>
+          <span class="desk__blurb dim">{{ desk.blurb }}</span>
+          <span class="desk__key data">
+            <span class="faint">needs</span> {{ desk.permission }}
+            @if (isSuperUser()) {
+              <span class="desk__grant">granted by {{ wildcard }}</span>
+            }
+          </span>
+        </a>
+      }
+    </div>
+    <p class="note">Ticket counts are illustrative — the ticket domain has no endpoints yet.</p>
+  </glass-card>
+</dashboard-layout>

@@ -1,0 +1,91 @@
+.ttab__scroll {
+  overflow-x: auto;
+  margin-inline: calc(var(--s4) * -1);
+  padding-inline: var(--s4);
+}
+
+.ttab {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+
+  th,
+  td {
+    padding: 0.7rem var(--s3);
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  thead th {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mist-faint);
+    border-bottom: 1px solid var(--glass-edge);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid rgb(255 255 255 / 0.05);
+    transition: background-color 0.18s var(--ease);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: var(--glass-fill);
+    }
+  }
+}
+
+.ttab__ref {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--mist-faint);
+}
+
+.ttab__subject {
+  max-width: 26rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--mist);
+}
+
+.ttab__act {
+  text-align: right;
+}
+
+.ttab__empty {
+  padding: var(--s5) 0;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.ttab__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (width < 60rem) {
+  .ttab__hide-md {
+    display: none;
+  }
+}
+
+@media (width < 46rem) {
+  .ttab__hide-sm {
+    display: none;
+  }
+
+  .ttab th,
+  .ttab td {
+    padding: 0.6rem var(--s2);
+  }
+}

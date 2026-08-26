@@ -1,0 +1,220 @@
+:host {
+  display: block;
+  flex: none;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  width: var(--sidebar-w);
+  height: 100dvh;
+  padding: var(--s3) 0 var(--s3) var(--s3);
+}
+
+.gsb__pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--s4) var(--s3);
+  border-radius: var(--radius-lg);
+}
+
+.gsb__head {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: 0 var(--s2) var(--s4);
+}
+
+.gsb__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  text-decoration: none;
+  color: var(--mist);
+
+  &:hover .gsb__mark {
+    box-shadow: 0 0 18px -2px var(--pulse-cyan);
+  }
+}
+
+.gsb__mark {
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: none;
+  background: linear-gradient(135deg, var(--pulse-cyan), var(--bloom-orchid));
+  clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%);
+  border-radius: 4px;
+  transform: rotate(45deg);
+  transition: box-shadow 0.4s var(--ease);
+}
+
+.gsb__titles {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.gsb__wordmark {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Says which shell you are in, so Agent and Manager views are never confused.
+.gsb__context {
+  font-size: 0.72rem;
+  color: var(--pulse-cyan);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.gsb__close {
+  display: none;
+  place-items: center;
+  flex: none;
+  margin-left: auto;
+  padding: 0.3rem;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-edge);
+  border-radius: 50%;
+  color: var(--mist-dim);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--mist);
+  }
+}
+
+.gsb__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.gsb__section-title {
+  padding: 0 var(--s2);
+  margin-bottom: var(--s2);
+}
+
+.gsb__items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gsb__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.58rem var(--s2);
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  color: var(--mist-dim);
+  text-decoration: none;
+  transition:
+    color 0.2s var(--ease),
+    background-color 0.2s var(--ease);
+
+  &:hover {
+    color: var(--mist);
+    background: var(--glass-fill);
+  }
+
+  glass-badge {
+    margin-left: auto;
+  }
+}
+
+.gsb__icon {
+  flex: none;
+  opacity: 0.6;
+  transition: opacity 0.2s var(--ease);
+}
+
+.gsb__label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.gsb__item--active {
+  color: var(--mist);
+  background: var(--glass-fill-hi);
+
+  .gsb__icon {
+    opacity: 1;
+    color: var(--pulse-cyan);
+  }
+
+  // A lit edge rather than a filled pill: the active row reads as the one pane
+  // catching light, which is the same logic as the rest of the glass.
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 22%;
+    bottom: 22%;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--pulse-cyan);
+    box-shadow: var(--glow-cyan);
+  }
+}
+
+.gsb__foot {
+  padding-top: var(--s3);
+  margin-top: var(--s3);
+  border-top: 1px solid var(--glass-edge);
+}
+
+.gsb__scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  border: 0;
+  background: rgb(4 2 12 / 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: fade 0.25s var(--ease-out) both;
+  cursor: default;
+}
+
+@media (width < 68rem) {
+  :host {
+    position: fixed;
+    inset: 0 auto 0 0;
+    height: 100dvh;
+    padding: var(--s2);
+    z-index: 80;
+    visibility: hidden;
+    transform: translateX(-100%);
+    transition:
+      transform 0.38s var(--ease),
+      visibility 0.38s;
+  }
+
+  // visibility, not just transform: an off-canvas drawer must leave the tab order.
+  :host(.is-open) {
+    visibility: visible;
+    transform: none;
+  }
+
+  .gsb__pane {
+    box-shadow: var(--glass-lip), 0 24px 64px -20px rgb(2 1 8 / 0.9);
+  }
+
+  .gsb__close,
+  .gsb__scrim {
+    display: grid;
+  }
+}

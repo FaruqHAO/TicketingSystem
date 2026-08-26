@@ -1,0 +1,41 @@
+<dashboard-layout heading="Ticket pool" eyebrow="Agent desk" context="Agent" [sections]="nav">
+  <glass-badge layoutActions tone="cyan" [live]="pool().length > 0">
+    {{ pool().length }} unclaimed
+  </glass-badge>
+
+  <div class="stats rise-in" style="--i: 0">
+    <glass-stat label="Unclaimed" [value]="pool().length" />
+    <glass-stat label="Urgent" [value]="urgent()" />
+    <glass-stat label="Claimed by you today" [value]="claimed().length" />
+  </div>
+
+  <glass-card
+    eyebrow="Anyone can take these"
+    heading="Waiting for an owner"
+    sub="Claim one and it moves to your queue."
+    [flush]="true"
+    class="rise-in"
+  >
+    <ticket-table
+      [tickets]="pool()"
+      actionLabel="Claim"
+      actionIcon="check"
+      emptyMessage="The pool is empty. Everything has an owner."
+      (action)="claim($event)"
+    />
+  </glass-card>
+
+  @if (claimed().length) {
+    <glass-card eyebrow="Just now" heading="You claimed">
+      <ul class="claimed">
+        @for (ref of claimed(); track ref) {
+          <li>
+            <lucide-icon name="check" [size]="14" aria-hidden="true" />
+            <span class="data">{{ ref }}</span>
+          </li>
+        }
+      </ul>
+      <p class="note">Assignment isn't saved to the server yet — this list resets when you reload.</p>
+    </glass-card>
+  }
+</dashboard-layout>

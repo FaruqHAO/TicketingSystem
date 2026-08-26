@@ -1,0 +1,139 @@
+// Live roles. One recessed tile per role, permissions grouped by area so
+// Administrator — which holds every one of them — still reads as a list.
+.roles {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: var(--s3);
+}
+
+.role {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s4);
+  border-radius: var(--radius);
+}
+
+.role__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+}
+
+.role__name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+
+.role__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.role__area {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mist-faint);
+}
+
+.role__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.chip {
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-edge);
+  font-size: 0.72rem;
+  color: var(--mist-dim);
+}
+
+.pp__warn {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--sla-warn);
+
+  lucide-icon {
+    flex: none;
+    margin-top: 0.15rem;
+  }
+
+  .data {
+    color: var(--mist);
+  }
+}
+
+// Search sits in the card's action slot, so it reads as a control on this list
+// rather than a page-level filter.
+.pp__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  lucide-icon {
+    position: absolute;
+    left: 0.7rem;
+    color: var(--mist-faint);
+    pointer-events: none;
+  }
+}
+
+.pp__input {
+  width: 15rem;
+  max-width: 100%;
+  padding-left: 2.3rem;
+  padding-block: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.pp__who {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+
+.pp__avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: linear-gradient(140deg, rgb(109 40 217 / 0.85), rgb(34 211 238 / 0.55));
+  border: 1px solid var(--glass-edge-hi);
+  font-family: var(--font-data);
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+}
+
+.pp__names {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+
+  .faint {
+    font-size: 0.74rem;
+  }
+}
+
+.pp__empty {
+  padding: var(--s5);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+@media (width < 40rem) {
+  .pp__input {
+    width: 11rem;
+  }
+}

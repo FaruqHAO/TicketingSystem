@@ -1,0 +1,54 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: var(--s4);
+  min-width: 0;
+}
+
+.gstat__label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mist-faint);
+}
+
+.gstat__figure {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--mist);
+}
+
+.gstat__unit {
+  font-family: var(--font-data);
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--mist-faint);
+}
+
+.gstat__delta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  font-size: 0.76rem;
+  margin-top: 0.1rem;
+}
+
+.gstat__delta--good {
+  color: var(--sla-ok);
+}
+
+.gstat__delta--bad {
+  color: var(--sla-breach);
+}
+
+.gstat__delta--flat {
+  color: var(--mist-faint);
+}

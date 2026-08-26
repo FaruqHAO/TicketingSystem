@@ -1,0 +1,76 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.6rem 0.2rem 0.5rem;
+  border: 1px solid var(--tone-edge, var(--glass-edge));
+  border-radius: var(--radius-pill);
+  background: var(--tone-fill, var(--glass-fill));
+  color: var(--tone-ink, var(--mist-dim));
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+.gbadge__dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+:host(.gbadge--live) .gbadge__dot {
+  animation: gbadge-pulse 2s var(--ease) infinite;
+}
+
+@keyframes gbadge-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.8);
+  }
+}
+
+// Tones set three variables; the base rules above do the rest.
+:host(.gbadge--neutral) {
+  --tone-ink: var(--mist-dim);
+}
+
+:host(.gbadge--cyan) {
+  --tone-ink: var(--pulse-cyan);
+  --tone-fill: rgb(34 211 238 / 0.1);
+  --tone-edge: rgb(34 211 238 / 0.3);
+}
+
+:host(.gbadge--violet) {
+  --tone-ink: #c4a6ff;
+  --tone-fill: rgb(168 85 247 / 0.12);
+  --tone-edge: rgb(168 85 247 / 0.32);
+}
+
+:host(.gbadge--ok) {
+  --tone-ink: var(--sla-ok);
+  --tone-fill: rgb(45 212 191 / 0.1);
+  --tone-edge: rgb(45 212 191 / 0.3);
+}
+
+:host(.gbadge--warn) {
+  --tone-ink: var(--sla-warn);
+  --tone-fill: rgb(251 191 36 / 0.1);
+  --tone-edge: rgb(251 191 36 / 0.3);
+}
+
+:host(.gbadge--breach) {
+  --tone-ink: var(--sla-breach);
+  --tone-fill: rgb(251 113 133 / 0.12);
+  --tone-edge: rgb(251 113 133 / 0.34);
+}
